@@ -37,7 +37,7 @@ qhit    jmp    scan
         gap    equ 9
         first  equ bptr-1+step
 
-bptr    dat    #1,       #11
+bptr    dat    #1,       #9
 dptr    spl    #12600,   13
 clear_s mov    *bptr,    >gate
         mov    *bptr,    >gate
