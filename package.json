@@ -1,0 +1,9 @@
+{
+  "name": "autoresearch-corewar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Karpathy-style autoresearch applied to Core War — AI agents evolve warriors autonomously",
+  "dependencies": {
+    "pmars-ts": "^1.0.0"
+  }
+}
