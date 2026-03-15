@@ -8,7 +8,16 @@
         qstep equ 9001
         qgap  equ 7
         ispacing equ 2291
-        org qs1
+        org pswitch
+
+; --- P-space: scanner default, switch to clear/imp on loss ---
+pswitch ldp.ab #1, p1state
+p1state dat    0, 0
+        stp.ab #1, #1
+        jmz    qs1, p1state
+        ldp.ab #0, pres
+pres    jmz    do_clear, pres
+        jmp    qs1
 
 ; --- Qscan: 6 probes to detect large opponents ---
 qs1     sne    qstep*3,  qstep*3+qgap
