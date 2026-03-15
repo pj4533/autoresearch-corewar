@@ -167,28 +167,43 @@ LOOP FOREVER:
 9. If avg_score is equal or worse: **discard** — `git reset --hard HEAD~1` to revert
 10. For promising improvements found at 200 rounds, re-run at 2000 rounds to confirm. Many apparent gains are statistical noise.
 
-### Research Guidance
+### How to Think About Research
 
-**Parameter tuning** (low risk, steady gains):
-- Scanner step size is the most impactful parameter. Try different primes: 3037, 4201, 5039, 7211, 7759, 8819, etc. Always use primes ≥ 11.
-- Scanner gap (spacing between probe pairs): try 5-15
-- Clear decrement (dptr value): affects clear thoroughness. Try 2000-10000.
-- Imp spacing: try different primes. Must be coprime to 25200.
-- Bomb patterns: the DAT values in bombs interact with indirect addressing modes.
+**You are a researcher, not a parameter tuner.** Don't just tweak numbers from a checklist. The best experiments come from understanding HOW the game works and designing warriors that exploit specific mechanics.
 
-**Architectural experiments** (higher risk, potential breakthroughs):
-- Different qscan probe counts (fewer = faster to scanner, more = better classification)
-- Different clear mechanisms (Guenzel clear, d-clear, multiple clear passes)
-- Different bomb types (DAT, SPL, JMP bombs, combined bombs)
-- Boot-copy relocation (copy warrior to new location before executing)
-- P-space usage (persistent memory between rounds — adaptive behavior)
+**Study the opponents.** Read every .red file in opponents/. Understand what each one does, how it wins, how it loses. Ask: what would beat THIS specific opponent? Where is it vulnerable? What assumptions does it make? Design warriors that exploit those weaknesses.
 
-**What NOT to waste time on** (from prior research):
-- Pure paper strategies: ceiling ~40% of scanner+clear scores in 25200 core
-- 0.66c scanner: requires boot-copy, step=37 only covers 1/681 of core at 25200
-- Non-prime step sizes: guaranteed incomplete core coverage
+**Think adversarially.** Your warrior fights 6 different opponents. Look at which ones you're losing to worst. What would a warrior specifically designed to beat that opponent look like? Can you build something that targets your weakest matchup without sacrificing other matchups?
 
-**Simplicity criterion**: All else being equal, simpler is better. A small improvement that adds ugly complexity is not worth it. Removing something and getting equal or better results is a great outcome. Weigh complexity cost against improvement magnitude.
+**Try radically different approaches.** The seed warrior is a scanner/clear hybrid. That's ONE approach. Consider:
+- What if you didn't scan at all? Pure bombing, pure replication, pure defense.
+- What if the warrior adapted mid-fight? (SPL into multiple strategies running simultaneously)
+- What about a vampire — overwriting opponent code to turn their processes into YOUR processes?
+- What about a tiny warrior (< 10 instructions) that's hard to find and hard to kill?
+- What about using the full 5,040 instruction limit? Most warriors are small. What advantage does size give?
+- What about a warrior that does nothing but create an imp ring so dense that no bomber can clear it?
+- What if you studied how the clear_imp opponent works and built something that specifically survives its bombing pattern?
+
+**Alternate between exploitation and exploration.** Spend some experiments tuning what works (parameter changes to the current best). Then spend some experiments trying something completely different (new architecture, new strategy, new concept). The breakthrough might come from either direction.
+
+**When tuning parameters**, keep these in mind:
+- Scanner step sizes MUST be prime (coprime to 25,200 for full coverage). Try many different primes — the specific value matters.
+- Bomb patterns interact with indirect addressing modes in non-obvious ways. Small changes can be catastrophic or transformative.
+- DAT spacing, clear decrement, imp spacing all affect coverage patterns.
+
+**When trying new architectures**, draw inspiration from:
+- Classic Core War literature: vampires, mirrors, pit-trappers, multi-component warriors
+- Opponent-specific counters: what kills papers? what kills scanners? what survives clearing?
+- Combinations nobody has tried: what if a stone ALSO had an imp? what if a paper ALSO scanned?
+- Defensive strategies: warriors that are hard to find (small footprint), hard to kill (redundant copies), or hard to damage (self-repairing)
+
+**What to avoid** (known dead ends from prior research):
+- Non-prime step sizes: guaranteed incomplete core coverage at 25,200
+- The specific 0.66c scanner pattern with step=37: covers only 1/681 of this core
+
+**Simplicity criterion**: All else being equal, simpler is better. A small improvement that adds ugly complexity is not worth it. Removing code and getting equal or better results is a great outcome.
+
+**Confirmation protocol**: When you find an improvement at 200 rounds, ALWAYS re-run at 2000 rounds before declaring it real. About 50% of 200-round "improvements" are statistical noise. Small gains (< 0.02 avg_score at 200r) are especially suspect.
 
 ## Important Notes
 
