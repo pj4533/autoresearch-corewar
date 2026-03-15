@@ -38,7 +38,7 @@ qhit    jmp    scan
         first  equ bptr-1+step
 
 bptr    dat    #1,       #11
-dptr    spl    #12600,   11
+dptr    spl    #12600,   13
 clear_s mov    *bptr,    >gate
         mov    *bptr,    >gate
         mov    *bptr,    >gate
