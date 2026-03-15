@@ -1,8 +1,8 @@
 ;redcode-94nop
 ;name Pyre
 ;author autoresearch-corewar
-;strategy Qscan → oneshot scanner OR Guenzel clear+imp fallback
-;strategy Hybrid: adapts behavior based on what qscan detects
+;strategy Qscan → oneshot scanner with triple-bomb clear
+;strategy Dead code decoy section + clear/imp fallback via qscan
 ;assert CORESIZE==25200
 
         qstep equ 9001
@@ -10,7 +10,7 @@
         ispacing equ 2291
         org pswitch
 
-; --- P-space: scanner default, switch to clear/imp on loss ---
+; --- Dead code decoy (never executes, entry is at qs1 via end) ---
 pswitch ldp.ab #1, p1state
 p1state dat    0, 0
         stp.ab #1, #1
