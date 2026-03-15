@@ -81,6 +81,177 @@ The main warrior families:
 
 **In the 25,200 core, scanner+clear hybrids dominate.** Papers score poorly (~40% of scanner scores) because they can only tie each other. Pure stones are too slow to cover the large core. The winning strategy is: scan efficiently (prime step), detect fast, clear thoroughly, and have an imp fallback.
 
+## Deep Core War Theory
+
+This section contains deep knowledge about Core War mechanics. Use it to design experiments that go beyond parameter tuning.
+
+### How Scanning Works
+
+A scanner steps through the core looking for non-zero cells (evidence of an opponent). The two main scanner types:
+
+**CMP/SNE Scanner** (4 instructions per check):
+```
+scan    sne   first+gap, first    ; compare two cells `gap` apart
+        add   inc, scan           ; advance by `step`
+        jmp   scan                ; repeat if equal
+        ; ... attack code         ; trigger on mismatch
+```
+
+**Oneshot Scanner** (2 instructions per check — faster):
+```
+scan    add   inc, scanptr
+scanptr sne   first+gap, }first   ; predecrement B-indirect scans AND advances
+        djn.f scan, *scanptr      ; loop with built-in counter
+```
+
+The oneshot is faster (2 vs 4 instructions per probe) but harder to get right. The `}` (B-postincrement) mode makes the scan pointer self-advancing. The `djn.f` provides both loop control and a second comparison in one instruction.
+
+**Why step size is the most important parameter:** The step determines which cells get probed. Coverage = `coreSize / GCD(step, coreSize)`. If `GCD(step, 25200) = 1` (coprime), coverage = 25200 (100%). If `GCD = 3`, coverage = 8400 (33%). Primes ≥ 11 guarantee full coverage.
+
+But not all coprime steps are equally good. Smaller steps (e.g., 3037) mean the scanner passes more cells between probes, but each probe is closer to the previous one — systematic local coverage. Larger steps (e.g., 7211) spread probes across the core faster — better early detection probability but potentially slower to complete full coverage. The optimal step balances early detection speed with full-core sweep efficiency.
+
+### How Bombing Works
+
+**DAT bombs** kill any process that executes them. This is the standard weapon. A bomber throws DAT instructions at regular intervals across the core.
+
+**SPL bombs** (`spl #0, #0`) force the target to fork a useless process. This dilutes the enemy's process queue — each real process runs slower because it shares cycles with useless ones. SPL bombs don't kill, they slow. Useful in combination with other attacks, but alone they create ties not wins.
+
+**JMP bombs** redirect target processes to a location (often a DAT trap or a "pit"). This is how vampires work — the bomb doesn't kill, it captures.
+
+**Bomb spacing matters.** When a scanner detects an opponent, it attacks the detected area. The `gate` pointer advances through the target zone, dropping bombs. The `dptr` (decrement pointer) controls how many bombs get dropped and how wide the attack area is. Larger `dptr` values = wider clear area but slower per-location coverage.
+
+### The Clear Mechanism
+
+When a scanner finds an opponent, it needs to DESTROY the opponent code, not just hit one cell. The "clear" is a bombing loop that carpet-bombs the detected area:
+
+```
+bptr    dat    #1, #11
+dptr    spl    #dec, 9
+clear   mov    *bptr, >gate     ; copy bomb to target, advance gate
+        mov    *bptr, >gate     ; second bomb per cycle (faster coverage)
+        djn.f  clear, }dptr     ; decrement counter, loop until done
+```
+
+The `>gate` (B-postincrement) automatically advances the target pointer after each bomb. Two `mov` instructions per loop iteration doubles the bombing rate. `djn.f` uses BOTH fields for loop control, squeezing maximum damage per cycle.
+
+**Clear decrement (`dptr` initial value):** Controls how many cycles the clear runs. Higher value = more area covered, but the scanner is stuck clearing while the opponent might still have active processes elsewhere. Lower value = quicker return to scanning, but might miss parts of the enemy.
+
+### Imp Mechanics
+
+An imp is `mov.i #1, step` — it copies itself forward by `step` cells each cycle. A single imp is nearly impossible to kill (it only occupies one cell at a time and keeps moving), but it can only tie (it doesn't attack anything).
+
+**Imp rings:** Multiple imps at regular spacing form a "ring" that sweeps through the core. The spacing must be coprime to 25200 for full coverage. Common pattern: SPL tree creates N processes, each becomes an imp at different offsets.
+
+**Imp gates:** Defense against imps. A `dat 0, 0` at a strategic location acts as a "gate" — if an imp copies itself onto the DAT, the DAT kills the imp's next iteration. Gates work because the imp's `mov.i` copies the ENTIRE instruction (including the DAT opcode), overwriting the imp's own `mov.i` instruction.
+
+**Imp spirals:** An imp ring where the spacing creates a spiraling pattern through the core. With K imps at spacing S, the spiral covers the core in `25200 / (K * GCD(S, 25200))` cycles. For full coverage, S must be coprime to 25200.
+
+### Boot-Copy (Booting)
+
+A warrior copies itself to a new location before executing. This separates the warrior's "visible" code (the boot-copy instructions) from its actual running location. Benefits:
+- Enemy scanners find the boot code (now inert DATs), not the running warrior
+- Allows using the full 5040 instruction budget — boot-copy code is disposable after execution
+- Can set up decoys at the original location
+
+Boot-copy adds initial delay (copying takes cycles) but the stealth advantage can be worth it. The tradeoff: time spent copying is time NOT spent attacking.
+
+### Quickscanning (Qscan)
+
+A preamble that checks specific addresses BEFORE starting the main strategy. Uses `sne/seq` pairs to probe locations:
+
+```
+sne   qstep*3,  qstep*3+qgap    ; probe pair 1
+seq   qstep*7,  qstep*7+qgap    ; anti-probe (skip if this matches)
+jmp   found                      ; detection! route to attack
+```
+
+The `sne/seq/jmp` pattern is a two-stage check: `sne` triggers on non-zero, `seq` cancels false positives. This reduces false detection of core noise.
+
+**Qscan is classification, not detection.** Against tiny warriors (< 30 instructions), qscan almost never triggers because the chance of any probe landing on the small footprint is negligible. Against larger warriors (100+ instructions), qscans can reliably classify opponent type and route to the optimal counter-strategy.
+
+**Key insight for 25200 core:** With 5-6 probe pairs, qscan checks ~12 cells out of 25,200. Against a 21-instruction warrior, detection probability ≈ 1 - (1 - 21/25200)^12 ≈ 1%. Against a 200-instruction warrior, ≈ 9%. Qscans are most valuable in metas with diverse warrior sizes.
+
+### Guenzel Clear
+
+A specific clear technique that uses SPL bombs AND DAT sweeping:
+
+```
+clear   spl    #0, >ptr      ; SPL bomb: forces enemy to fork useless process
+loop    mov    clrbomb, >ptr  ; DAT bomb: kills processes
+        djn.f  loop, >ptr    ; advance and repeat
+```
+
+The SPL bomb at the start serves dual purpose: (1) dilutes enemy processes, (2) creates a "process wall" — enemy processes that execute the SPL spawn children near the SPL, which then execute surrounding DATs. It's more effective than pure DAT bombing because it actively corrupts enemy process distribution.
+
+### P-Space (Persistent Memory)
+
+P-space is 500 cells of memory that persists between rounds. P[0] stores the previous round's result (0=loss, 1=tie, 2=win). P[1]-P[499] are available for the warrior.
+
+**Switcher warriors** use P-space to change strategy based on prior results: "I lost last round using strategy A → try strategy B this round." This is the most practical P-space use.
+
+**Implementation:**
+```
+ldp.ab  #0, result    ; load previous result into 'result'
+result  jmz    strat_a ; if lost (0), try strategy A
+        jmp    strat_b ; otherwise try strategy B
+```
+
+P-space enables reactive play. A scanner that lost might switch to a paper fallback. A paper that lost might switch to a scanner. The warrior adapts to the opponent across a multi-round match.
+
+**State machines:** More complex P-space strategies track multiple rounds, implementing a finite state machine: "If I lost twice with scanner, try clear/imp. If that lost, try paper. If paper won, stick with it." The 500-cell P-space is more than enough for sophisticated state tracking.
+
+**Handshake:** Two copies of the same warrior can detect each other via P-space. Both write to a known P-space location, then read it. If the value matches, they know they're the same warrior → play passively (imp ring) to guarantee ties. This is valuable in tournament formats.
+
+### Advanced Techniques
+
+**DJN streams:** A continuous stream of `djn` instructions that decrement a target location every cycle. Used in clear routines to create "process traps" — if an enemy process enters the djn stream zone, it gets caught in a decrement loop that eventually kills it.
+
+**Decoy makers:** Warriors that scatter non-DAT instructions across the core. These waste enemy scanner attacks — the scanner detects the decoy, spends cycles clearing it, while the real warrior operates elsewhere. With 5040 instructions, a warrior can place hundreds of decoys.
+
+**Core-clear:** Rather than scanning for enemies, a core-clear warrior systematically wipes the entire core clean with DAT bombs. Uses parallel processes (via SPL tree) to clear from multiple positions simultaneously. Effective against papers and stones; weak against scanners that find the clear warrior before it finishes.
+
+**Self-splitting warriors:** Fork processes to run multiple strategies simultaneously. Common: SPL tree → half processes run scanner, half run imp ring. The cost is process dilution (each process runs at 1/N speed), but the coverage of two strategies can be worth it.
+
+## Prior Research Results
+
+These experiments have been run on this exact 25,200 core. Study the results to avoid repeating dead ends and to build on what worked.
+
+### What Worked
+
+**Oneshot scanner (step=9001):** 21 instructions. Scans at 2 instructions per check. Beats all current meta opponents (56-60% vs scanners, 40-48% vs papers). Won #1 on competitive ladder. Its strength is TINY footprint — nearly invisible to enemy scans. Prime step = full core coverage.
+
+**Guenzel clear + imp (Dustfall):** SPL tree → 32 processes. Half run Guenzel clear, half run imp ring (spacing 2291). Results: 90% vs stones, 81% vs paper+bomber, 58% vs scanners, 72% ties vs papers. Dominant against stones and papers. Imp ring provides tie insurance. Clear sweeps the ENTIRE core in ~788 cycles.
+
+**Qscan → Scanner OR Clear/Imp (DustfallQS):** 5-pair quickscan routes to either oneshot scanner or Guenzel clear+imp. Best generalist: 70% vs some scanners, 46% vs papers, 52% vs stones. The routing decision fundamentally changes the archetype, even with low qscan hit rates.
+
+**Key step sizes found to be strong:** 7211 (breakthrough value, +8.9% improvement), 9001, 4201, 5039. All prime. The specific value of 7211 was discovered through empirical testing and outperformed 167 other primes tested.
+
+### What Failed (and WHY — study these failure modes)
+
+**Temporal detection (Shapeshifter):** Probe random locations, wait, probe again — detect opponent by movement. FAILED because in 25200 core, a 21-instruction warrior occupies 0.08% of cells. Random probes have negligible hit probability. Would need ~2500 probes for 50% detection. Any detection scheme requiring random hits is broken at this core size.
+
+**Corruption bombs (imp/ADD/SUB):** Using `mov.i #0, 1` (imp instruction) as bombs instead of DAT. Creates TIES not wins — target processes become imps that survive indefinitely. DAT is strictly better because it KILLS. Any bomb that allows the target process to survive creates ties.
+
+**Vampire (JMP fangs):** Place JMP instructions as "fangs" to capture enemy processes. FAILED because enemy processes don't execute fangs — scanners/papers/stones have tight PC loops (3-4 instructions). Their PCs never land on our fang locations. Vampires only work against wandering/corrupted PCs.
+
+**Multi-rate bomber (parallel bombing threads):** Fork 3 processes bombing at different step sizes. FAILED due to process dilution: with N processes, each bombs at 1/N rate. Total bombing rate is IDENTICAL to single-threaded. Multi-threading interleaves coverage without increasing rate.
+
+**Paper + bomber hybrid:** Paper with a dedicated DAT bombing thread. FAILED because the bomber thread at 1/N speed is negligible. Against other papers it changes nothing (100% ties). The bomber needs enough speed to matter, which process dilution prevents.
+
+**Massive quickscan (100+ probes):** 300+ instruction qscan for high detection. PARTIALLY WORKED against papers/stones (46-53%), but the huge code size makes the warrior a barn door for enemy scanners. The qscan code itself becomes the weakness.
+
+### Architectural Laws of the 25200 Core
+
+1. **Sparsity dominates.** A 21-instruction warrior occupies 0.08% of 25200 cells. Random probing fails. Only systematic scanning works. Small footprint = survival advantage.
+
+2. **Process dilution always costs.** Every SPL halves process speed. The ONLY designs that overcome this are when ALL processes do the SAME thing (32 clear processes = 32× area coverage, not 1/32 speed penalty each).
+
+3. **The RPS triangle is inescapable.** Scanner > Paper > Stone > Scanner. No single warrior beats all three types. Qscan routing and P-space switching are the only tools for adapting. The optimal warrior is a hybrid that routes to the right counter-strategy.
+
+4. **Compact + fast beats clever.** Every instruction added makes you larger, easier to find, slower to boot. The 21-instruction Oneshot25k is nearly invisible. A 300-instruction warrior is a barn door. Elegance = maximum effect from minimum code.
+
+5. **DAT kills, everything else doesn't.** Only DAT bombs reliably win games. SPL, JMP, ADD bombs create interesting effects but ultimately lead to ties or slower kills. Build around DAT.
+
 ## Experimentation
 
 Each experiment modifies `warrior.red` and runs it against the fixed opponent suite.
