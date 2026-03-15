@@ -32,6 +32,7 @@ bptr    dat    #1,       #11
 dptr    spl    #12600,   9
 clear_s mov    *bptr,    >gate
         mov    *bptr,    >gate
+        mov    *bptr,    >gate
         djn.f  clear_s,  }dptr
 
         for    5
