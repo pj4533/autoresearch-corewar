@@ -1,3 +1,4 @@
 node_modules/
 eval.log
 results.tsv
+.claude/
