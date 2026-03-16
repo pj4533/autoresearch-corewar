@@ -5,7 +5,7 @@
 ;strategy Score: 2.876 (+21.4% from baseline 2.368)
 ;assert CORESIZE==25200
 
-        step   equ 4207
+        step   equ 12621
         gap    equ 2
         org scan
 
