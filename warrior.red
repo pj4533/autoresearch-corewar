@@ -9,7 +9,7 @@
         gap    equ 2
         org scan
 
-; --- 4000 identical SPL traps (enemy decoys, don't trigger our SNE) ---
+; --- 5029 identical SPL traps ---
         for    5029
         spl    #0, #0
         rof

@@ -2,3 +2,4 @@ node_modules/
 eval.log
 results.tsv
 .claude/
+.DS_Store
