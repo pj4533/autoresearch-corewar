@@ -43,7 +43,7 @@ clear_s mov    *bptr,    >gate
         mov    *bptr,    >gate
         djn.f  clear_s,  }dptr
 
-        for    3
+        for    2
         dat    0,0
         rof
 
@@ -53,7 +53,7 @@ scanptr sne    first+gap,}first
         mov    scanptr,  gate
         jmp    clear_s-1, <gate
 
-        for    3
+        for    2
         dat    0,0
         rof
 
