@@ -10,7 +10,7 @@
         org scan
 
 ; --- 4000 identical SPL traps (enemy decoys, don't trigger our SNE) ---
-        for    4000
+        for    5029
         spl    #0, #0
         rof
 
