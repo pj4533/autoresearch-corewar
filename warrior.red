@@ -70,7 +70,7 @@ clear_g spl    #0,     >ptr
 loop    mov    clrbomb, >ptr
         djn.f  loop,   >ptr
 
-        for    16
+        for    26
         dat    0, 0
         rof
 
