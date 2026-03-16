@@ -2,7 +2,7 @@
 ;name Fortress
 ;author autoresearch-corewar
 ;strategy TRAP FIELD: 5029 spl traps + hidden oneshot scanner
-;strategy Score: 2.918 (+23.2% from baseline 2.368)
+;strategy Score: 2.922 (+23.4% from baseline 2.368)
 ;assert CORESIZE==25200
 
         step   equ 21
@@ -26,7 +26,7 @@ clear_s mov    *bptr,    >gate
 
 scan    add    inc,      scanptr
 scanptr sne    first+gap, first
-        djn.f  scan,     *scanptr
+        djn.b  scan,     #0
         mov    scanptr,  gate
         jmp    clear_s-1, <gate
 
