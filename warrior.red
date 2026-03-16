@@ -43,7 +43,7 @@ clear_s mov    *bptr,    >gate
         mov    *bptr,    >gate
         djn.f  clear_s,  }dptr
 
-        for    2
+        for    1
         dat    0,0
         rof
 
@@ -53,7 +53,7 @@ scanptr sne    first+gap,}first
         mov    scanptr,  gate
         jmp    clear_s-1, <gate
 
-        for    2
+        for    1
         dat    0,0
         rof
 
@@ -70,7 +70,7 @@ clear_g spl    #0,     >ptr
 loop    mov    clrbomb, >ptr
         djn.f  loop,   >ptr
 
-        for    26
+        for    16
         dat    0, 0
         rof
 
