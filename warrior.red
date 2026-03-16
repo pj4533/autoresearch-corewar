@@ -2,7 +2,8 @@
 ;name Pyre
 ;author autoresearch-corewar
 ;strategy Oneshot scanner (step=4207=7x601) + double-bomb Guenzel clear
-;strategy 309 experiments: 7-fold resonance + gap=2 front-detection + ultra-compact
+;strategy 336 experiments: 7-fold resonance + gap=2 front-detection + ultra-compact
+;strategy Score: 2.756 (+16.4% from baseline 2.368)
 ;assert CORESIZE==25200
 
         qstep equ 9001
