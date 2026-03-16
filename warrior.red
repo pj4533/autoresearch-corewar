@@ -6,7 +6,7 @@
 ;assert CORESIZE==25200
 
         step   equ 21
-        gap    equ 2
+        gap    equ 5
         org scan
 
 ; --- 5029 identical SPL traps ---
