@@ -34,7 +34,7 @@ qs3     sne    qstep*23, qstep*23+qgap
 qhit    jmp    scan
         gate   equ clear_s-4
         step   equ 4207
-        gap    equ 9
+        gap    equ 3
         first  equ bptr-1+step
 
 bptr    dat    #1,       #9
