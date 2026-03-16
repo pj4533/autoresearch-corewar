@@ -32,9 +32,9 @@ qs3     sne    qstep*23, qstep*23+qgap
 
 ; --- Scanner mode: incremental scan with clear-on-hit ---
 qhit    jmp    scan
-        gate   equ clear_s-5
+        gate   equ clear_s-6
         step   equ 4207
-        gap    equ 3
+        gap    equ 2
         first  equ bptr-1+step
 
 bptr    dat    #1,       #9
