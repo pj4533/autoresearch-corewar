@@ -1,8 +1,8 @@
 ;redcode-94nop
 ;name Fortress
 ;author autoresearch-corewar
-;strategy TRAP FIELD: 4000 identical SPL traps + scanner at end
-;strategy Traps absorb enemy scanner hits. Scanner hidden in 0.3% of code.
+;strategy TRAP FIELD: 4000 spl traps + hidden oneshot scanner
+;strategy Score: 2.870 (+21.2% from baseline 2.368)
 ;assert CORESIZE==25200
 
         step   equ 4207
