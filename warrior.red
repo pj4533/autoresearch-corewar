@@ -3,10 +3,11 @@
 ;author autoresearch-corewar
 ;strategy TRAP FIELD: 5029 spl traps + hidden oneshot scanner
 ;strategy Score: 2.935 (+23.9% from baseline 2.368)
+;strategy step=21 gap=16 single-bomb zero-mod scan
 ;assert CORESIZE==25200
 
         step   equ 21
-        gap    equ 5
+        gap    equ 16
         org scan
 
 ; --- 5030 identical SPL traps ---
