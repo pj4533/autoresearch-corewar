@@ -1,18 +1,18 @@
 # autoresearch-corewar
 
-You are an autonomous Core War researcher. Your goal: evolve the strongest possible warrior for a 25,200-cell arena.
+You are an autonomous Core War researcher. Your goal: evolve the strongest possible warrior for competitive play.
 
 ## Setup
 
 To set up a new experiment run, work with the user to:
 
-1. **Agree on a run tag**: propose a tag based on today's date (e.g. `mar16`). The branch `autoresearch/<tag>` must not already exist — this is a fresh run.
+1. **Agree on a run tag**: propose a tag based on today's date (e.g. `mar17`). The branch `autoresearch/<tag>` must not already exist — this is a fresh run.
 2. **Create the branch**: `git checkout -b autoresearch/<tag>` from current main.
 3. **Read the in-scope files**: The repo is small. Read these files for full context:
    - `README.md` — repository context and Core War primer.
    - `warrior.red` — the file you modify. The current warrior source code.
    - All files in `opponents/` — the opponent suite you're testing against.
-   - `evaluate.cjs` — fixed evaluation harness. Do not modify.
+   - `evaluate.cjs` — evaluation harness (configurable arena).
 4. **Verify pmars-ts is installed**: Run `npm ls pmars-ts`. If not installed, tell the human to run `npm install`.
 5. **Initialize results.tsv**: Create `results.tsv` with just the header row. The baseline will be recorded after the first run.
 6. **Confirm and go**: Confirm setup looks good.
@@ -34,26 +34,16 @@ Core War is a competitive programming game where programs ("warriors") battle in
 | Min separation | 100 | 100 |
 | P-Space size | 500 | 500 |
 
-### Critical: Number Theory
-
-The core size factorization determines the strategy landscape.
+### Number Theory
 
 **Standard 8,000 core:** 8,000 = 2⁶ × 5³
 
-- Scanner step sizes MUST be coprime to 8,000 — otherwise the scanner can never visit the full core.
-- Any step divisible by 2 or 5 leaves blind spots.
-- **Use prime numbers ≥ 3 (excluding 5) for step sizes.** Primes like 3, 7, 11, 13, etc. guarantee full coverage.
-- Common competitive steps: 3044, 2389, 5039 (all prime).
-
-**Modelwar.ai 25,200 core:** 25,200 = 2² × 3² × 5² × 7
-
-- Steps divisible by 2, 3, 5, or 7 leave blind spots.
-- **Use prime numbers ≥ 11 for step sizes.** Primes are always coprime to 25,200.
-- Not all primes are equally effective — the specific value matters due to interaction with warrior layout and bomb spacing.
+- Scanner step sizes MUST be coprime to 8,000 — any step divisible by 2 or 5 leaves blind spots.
+- All odd primes except 5 are coprime to 8,000 and guarantee full coverage.
+- **Optima numbers** (steps with optimal early detection distribution) for mod 8000: 3044, 2389, 5711, 2655, 5345, 6427, 1573, 3956, 4044, 4649.
+- These optima numbers minimize the maximum gap between consecutive probed positions, giving the fastest worst-case detection.
 
 ### Redcode Quick Reference
-
-Core War warriors use these key instruction types:
 
 | Opcode | Purpose | Example |
 |--------|---------|---------|
@@ -61,203 +51,289 @@ Core War warriors use these key instruction types:
 | `MOV` | Copy instruction from A to B | `mov bomb, @ptr` |
 | `ADD` | Add A to B | `add #step, ptr` |
 | `SUB` | Subtract A from B | `sub #1, count` |
+| `MUL` | Multiply A by B | `mul #3, ptr` |
+| `DIV` | Divide B by A | `div #2, ptr` |
+| `MOD` | Modulo B by A | `mod #5, ptr` |
 | `JMP` | Jump to address | `jmp loop` |
 | `JMZ` | Jump if zero | `jmz scan, check` |
 | `JMN` | Jump if not zero | `jmn loop, count` |
 | `DJN` | Decrement B, jump if not zero | `djn loop, count` |
 | `SNE` | Skip next if not equal | `sne addr1, addr2` |
-| `SEQ` | Skip next if equal | `seq addr1, addr2` |
+| `SEQ` | Skip next if equal (alias: CMP) | `seq addr1, addr2` |
 | `SPL` | Split — fork a new process | `spl target` |
+| `SLT` | Skip if less than | `slt #5, count` |
+| `LDP` | Load from P-space | `ldp.ab #0, result` |
+| `STP` | Store to P-space | `stp #1, #0` |
 | `NOP` | No operation | `nop` |
 
 **Addressing modes:** `#` immediate, `$` direct (default), `*` A-indirect, `@` B-indirect, `{` A-predecrement, `<` B-predecrement, `}` A-postincrement, `>` B-postincrement.
 
 **Modifiers:** `.a` (A-field only), `.b` (B-field only), `.ab`, `.ba`, `.f` (both fields same direction), `.x` (both fields crossed), `.i` (entire instruction).
 
+## Deep Core War Theory (Standard 8000/100)
+
+### The RPS Triangle
+
+Core War has a fundamental Rock-Paper-Scissors dynamic:
+- **Scanners** beat **Papers** (find and destroy before replication overwhelms)
+- **Papers** beat **Stones/Bombers** (replicate faster than stones can bomb)
+- **Stones** beat **Scanners** (bombs hit scanner code before scanner finds stone)
+
+No single warrior beats all three. The competitive meta-game is about building hybrids that minimize weaknesses while maximizing matchup coverage.
+
 ### Strategy Archetypes
 
-The main warrior families:
+#### Scanners
+Step through core looking for non-empty cells. When found, attack the target. The dominant architecture in competitive play.
 
-- **Scanner**: Steps through core looking for non-empty cells. When found, attacks the target. Effectiveness depends on step size (coverage), detection method, and attack pattern.
-- **Paper**: Self-replicating warrior. Copies itself to new locations. Hard to kill because new copies keep spawning. Scores through survival (ties).
-- **Stone**: Throws DAT bombs across the core. Simple but effective. Doesn't scan — just carpet-bombs.
-- **Imp**: Self-replicating `MOV.I #1, step` instructions that march through memory. Nearly unkillable but can only tie.
-- **Clear/Imp**: Hybrid — carpet-bombs the core AND launches an imp ring as backup. Strong but needs many processes.
-- **Scanner/Clear**: Scans for opponents, then clears the detected area. The dominant hybrid architecture in large cores.
-- **Qscan**: Quick-scan preamble that probes specific addresses to classify the opponent before choosing strategy.
-
-**In the 25,200 core, scanner+clear hybrids dominate.** Papers score poorly (~40% of scanner scores) because they can only tie each other. Pure stones are too slow to cover the large core. The winning strategy is: scan efficiently (prime step), detect fast, clear thoroughly, and have an imp fallback.
-
-## Deep Core War Theory
-
-This section contains deep knowledge about Core War mechanics. Use it to design experiments that go beyond parameter tuning.
-
-### How Scanning Works
-
-A scanner steps through the core looking for non-zero cells (evidence of an opponent). The two main scanner types:
-
-**CMP/SNE Scanner** (4 instructions per check):
-```
-scan    sne   first+gap, first    ; compare two cells `gap` apart
-        add   inc, scan           ; advance by `step`
-        jmp   scan                ; repeat if equal
-        ; ... attack code         ; trigger on mismatch
+**CMP Scanner** (0.33c — 3 instructions per probe):
+```redcode
+scan    sne   scan+gap, scan       ; compare two locations gap apart
+        add   inc, scan            ; advance by step
+        jmp   scan                 ; loop
+        ; ... attack on mismatch
+inc     dat   #step, #step
 ```
 
-**Oneshot Scanner** (2 instructions per check — faster):
-```
+**Oneshot Scanner** (also 0.33c but more compact):
+```redcode
 scan    add   inc, scanptr
-scanptr sne   first+gap, }first   ; predecrement B-indirect scans AND advances
+scanptr sne   first+gap, }first   ; }first provides sequential backup
         djn.f scan, *scanptr      ; loop with built-in counter
+        ; ... one-time attack, then permanent clear
+```
+The oneshot scans until first detection, then switches permanently to a core clear. No further scanning. This is the most common competitive scanner.
+
+**0.66c Scanner** (unrolled, 2 probes per 3 instructions):
+```redcode
+scan    sne   first, first+gap
+        seq   first+step, first+step+gap
+        jmp   found
+        add   inc, scan
+        jmp   scan
+```
+Faster scanning but uses more instructions. The `sne/seq` pair checks two locations per iteration.
+
+**Scanner Step Sizes:** The step determines probe distribution across the core. For 8000 core, optimal steps (optima numbers) are:
+
+| Mod | Optima Numbers |
+|-----|---------------|
+| mod 1 | 3044, 2389, 5711, 2655, 5345, 6427, 1573, 3956, 4044, 4649 |
+| mod 2 | 3044, 2389, 2655, 1573, 3956, 4649, 3351, 5345, 5711, 6427 |
+| mod 4 | 3044, 2389, 2655, 1573, 4649, 3351, 3956, 5345, 5711, 6427 |
+| mod 5 | 3044, 2389, 5711, 2655, 5345, 1573, 3956, 6427, 4044, 4649 |
+
+The mod value should match your warrior's footprint size. Mod 1 is for single-cell checking; mod 5 for a 5-cell cluster.
+
+#### Papers (Replicators)
+Self-copying warriors that spread through the core. Hard to kill because destroying one copy doesn't stop the others.
+
+**Silk Paper** (compact, uses SPL for speed):
+```redcode
+silk    spl  @0, >dest           ; fork + advance copy pointer
+        mov  }-1, >-1            ; copy self forward
+        mov  bomb, >pos          ; drop anti-imp bomb
+        djn  silk, #0            ; loop forever
+pos     dat  0, offset
+bomb    dat  <2667, <5334        ; anti-imp MOV bomb
+```
+The `spl @0` creates a new process at the copy destination, doubling replication speed. Papers score through survival — even if they can't kill the opponent, they survive to earn ties (1 point each).
+
+**Moore Paper** (named after David Moore): More sophisticated replication with integrated bombing. Each copy includes a bombing component that damages nearby enemies.
+
+**LP (Launching Pad) Paper**: Boots a paper component to a distant location before starting replication. The boot provides stealth — enemy scanners find the boot code (inert) while the paper replicates from a hidden location.
+
+**Anti-imp bombing:** Papers should drop `dat` bombs with non-zero fields (e.g., `dat <2667, <5334`) to kill imp processes. Pure `dat 0, 0` doesn't stop imps because `mov.i #0, step` copies the DAT but the imp keeps moving.
+
+#### Stones (Bombers)
+Blindly throw bombs across the core at a fixed step. Simple but effective against small warriors.
+
+**Basic Stone:**
+```redcode
+stone   mov  bomb, @ptr
+        add  #step, ptr
+        jmp  stone
+ptr     dat  0, step
+bomb    dat  <2667, <2667
 ```
 
-The oneshot is faster (2 vs 4 instructions per probe) but harder to get right. The `}` (B-postincrement) mode makes the scan pointer self-advancing. The `djn.f` provides both loop control and a second comparison in one instruction.
-
-**Why step size is the most important parameter:** The step determines which cells get probed. Coverage = `coreSize / GCD(step, coreSize)`. If `GCD(step, 25200) = 1` (coprime), coverage = 25200 (100%). If `GCD = 3`, coverage = 8400 (33%). Primes ≥ 11 guarantee full coverage.
-
-But not all coprime steps are equally good. Smaller steps (e.g., 3037) mean the scanner passes more cells between probes, but each probe is closer to the previous one — systematic local coverage. Larger steps (e.g., 7211) spread probes across the core faster — better early detection probability but potentially slower to complete full coverage. The optimal step balances early detection speed with full-core sweep efficiency.
-
-### How Bombing Works
-
-**DAT bombs** kill any process that executes them. This is the standard weapon. A bomber throws DAT instructions at regular intervals across the core.
-
-**SPL bombs** (`spl #0, #0`) force the target to fork a useless process. This dilutes the enemy's process queue — each real process runs slower because it shares cycles with useless ones. SPL bombs don't kill, they slow. Useful in combination with other attacks, but alone they create ties not wins.
-
-**JMP bombs** redirect target processes to a location (often a DAT trap or a "pit"). This is how vampires work — the bomb doesn't kill, it captures.
-
-**Bomb spacing matters.** When a scanner detects an opponent, it attacks the detected area. The `gate` pointer advances through the target zone, dropping bombs. The `dptr` (decrement pointer) controls how many bombs get dropped and how wide the attack area is. Larger `dptr` values = wider clear area but slower per-location coverage.
-
-### The Clear Mechanism
-
-When a scanner finds an opponent, it needs to DESTROY the opponent code, not just hit one cell. The "clear" is a bombing loop that carpet-bombs the detected area:
-
-```
-bptr    dat    #1, #11
-dptr    spl    #dec, 9
-clear   mov    *bptr, >gate     ; copy bomb to target, advance gate
-        mov    *bptr, >gate     ; second bomb per cycle (faster coverage)
-        djn.f  clear, }dptr     ; decrement counter, loop until done
+**Stone with Imp Backup:** After N bombing cycles, launch an imp ring for tie insurance:
+```redcode
+        spl  1
+        spl  1
+        mov  #step, -1     ; set up imp
+        ; some processes bomb, some become imps
 ```
 
-The `>gate` (B-postincrement) automatically advances the target pointer after each bomb. Two `mov` instructions per loop iteration doubles the bombing rate. `djn.f` uses BOTH fields for loop control, squeezing maximum damage per cycle.
+The `dat <2667, <2667` bomb is standard: the `<` predecrement side effects corrupt nearby cells, doing splash damage beyond the bomb's direct position.
 
-**Clear decrement (`dptr` initial value):** Controls how many cycles the clear runs. Higher value = more area covered, but the scanner is stuck clearing while the opponent might still have active processes elsewhere. Lower value = quicker return to scanning, but might miss parts of the enemy.
+**Stone step selection:** Stones should use coprime steps to cover the full core. For 8000: steps like 3463, 2971, 3037 are common.
 
-### Imp Mechanics
+#### Imp Strategies
+`mov.i #1, step` copies itself forward by `step` cells each cycle. Nearly impossible to kill.
 
-An imp is `mov.i #1, step` — it copies itself forward by `step` cells each cycle. A single imp is nearly impossible to kill (it only occupies one cell at a time and keeps moving), but it can only tie (it doesn't attack anything).
+**Imp Rings:** Multiple imps at even spacing sweep the core. For K-point ring in 8000 core:
 
-**Imp rings:** Multiple imps at regular spacing form a "ring" that sweeps through the core. The spacing must be coprime to 25200 for full coverage. Common pattern: SPL tree creates N processes, each becomes an imp at different offsets.
+| K | Spacing (coprime to 8000) | Coverage rate |
+|---|--------------------------|---------------|
+| 3 | 2667 | 3 cells/cycle |
+| 5 | 1601 | 5 cells/cycle |
+| 7 | 1143 | 7 cells/cycle |
+| 9 | 889 | 9 cells/cycle |
 
-**Imp gates:** Defense against imps. A `dat 0, 0` at a strategic location acts as a "gate" — if an imp copies itself onto the DAT, the DAT kills the imp's next iteration. Gates work because the imp's `mov.i` copies the ENTIRE instruction (including the DAT opcode), overwriting the imp's own `mov.i` instruction.
+Launch via SPL tree (e.g., `spl 1; spl 1` creates 4 processes, `spl 2` routes half to imp, half to another strategy).
 
-**Imp spirals:** An imp ring where the spacing creates a spiraling pattern through the core. With K imps at spacing S, the spiral covers the core in `25200 / (K * GCD(S, 25200))` cycles. For full coverage, S must be coprime to 25200.
+**Imp Gates:** Defense against imps. Place `dat 0, 0` cells in the imp's path. When `mov.i` copies the DAT over itself, the imp dies. Strategic gate placement at regular intervals catches imp rings.
 
-### Boot-Copy (Booting)
+#### Clear Mechanisms
 
-A warrior copies itself to a new location before executing. This separates the warrior's "visible" code (the boot-copy instructions) from its actual running location. Benefits:
-- Enemy scanners find the boot code (now inert DATs), not the running warrior
-- Allows using the full 5040 instruction budget — boot-copy code is disposable after execution
-- Can set up decoys at the original location
+After detecting an enemy, the scanner must DESTROY the opponent's code — not just hit one cell.
 
-Boot-copy adds initial delay (copying takes cycles) but the stealth advantage can be worth it. The tradeoff: time spent copying is time NOT spent attacking.
-
-### Quickscanning (Qscan)
-
-A preamble that checks specific addresses BEFORE starting the main strategy. Uses `sne/seq` pairs to probe locations:
-
+**Standard Core Clear:**
+```redcode
+bptr    dat  #1, #11
+dptr    spl  #dec, 9
+clear   mov  *bptr, >gate      ; copy bomb to target, advance
+        mov  *bptr, >gate      ; double-bomb for speed
+        djn.f clear, }dptr     ; loop with sweep
 ```
-sne   qstep*3,  qstep*3+qgap    ; probe pair 1
-seq   qstep*7,  qstep*7+qgap    ; anti-probe (skip if this matches)
-jmp   found                      ; detection! route to attack
+Two `mov` per iteration doubles bombing rate. `>gate` auto-advances the target. `}dptr` provides secondary sweep.
+
+**D-Clear (Decrement Clear):** Uses `djn` instructions to decrement enemy code. Faster than MOV bombing but doesn't overwrite opcodes.
+
+**SSD Clear (Stun-Scan-Destroy):** First stuns the enemy with SPL bombs (process dilution), then scans the stunned area for remaining code, then destroys with DAT bombs. Three-phase approach.
+
+**Guenzel Clear:** Opens with `spl #0, >ptr` before the MOV bombing. The SPL stuns enemy processes in the clear zone, making the subsequent MOV bombs more effective.
+
+#### Quickscanning (Qscan)
+
+A preamble executed BEFORE the main strategy. Checks specific addresses to detect large opponents early.
+
+**Basic Qscan:**
+```redcode
+        sne  qstep*3, qstep*3+qgap
+        seq  qstep*7, qstep*7+qgap
+        jmp  found
+```
+The `sne/seq/jmp` triplet: `sne` detects non-zero, `seq` cancels false positives (bomb trails), `jmp` routes to attack.
+
+**Qscan levels:**
+- **Q^2 (Ivner)**: 2 check pairs. Fast but low detection. ~8% vs 100-instruction opponent.
+- **Q^3 (MiniQ)**: 3 pairs. Balanced. ~12% detection.
+- **Q^4**: 4 pairs. Good detection. ~16% vs 100 instructions. Used by most competitive hybrids.
+- **Q^4.5 (Gutzeit)**: 4.5 pairs using overlapping logic. Maximum detection in compact code.
+
+**Qscan routing:** After detection, route to the optimal counter-strategy:
+- Detected large opponent (paper/stone) → route to stone bomber or core clear
+- No detection → use default scanner strategy
+
+**Counter-qscan:** Boot-copy your warrior before qscan executes. The boot leaves inert code at the load point, defeating enemy qscans that target your original position.
+
+#### Vampire Strategies
+
+Place JMP "fang" instructions across the core. Enemy processes that execute a fang get redirected to a "pit" (usually a SPL/DAT trap zone).
+
+```redcode
+fang    jmp  pit, 0              ; redirect to trap
+pit     spl  #0, #0              ; trap zone: infinite fork
+        dat  0, 0                ; kill zone
 ```
 
-The `sne/seq/jmp` pattern is a two-stage check: `sne` triggers on non-zero, `seq` cancels false positives. This reduces false detection of core noise.
+Vampires are niche but can be surprisingly effective (FL2b reached #7 all-time with age 1334). They excel against warriors with wandering processes but struggle against tight-loop scanners.
 
-**Qscan is classification, not detection.** Against tiny warriors (< 30 instructions), qscan almost never triggers because the chance of any probe landing on the small footprint is negligible. Against larger warriors (100+ instructions), qscans can reliably classify opponent type and route to the optimal counter-strategy.
+#### Boot-Copy Techniques
 
-**Key insight for 25200 core:** With 5-6 probe pairs, qscan checks ~12 cells out of 25,200. Against a 21-instruction warrior, detection probability ≈ 1 - (1 - 21/25200)^12 ≈ 1%. Against a 200-instruction warrior, ≈ 9%. Qscans are most valuable in metas with diverse warrior sizes.
+Copy your warrior to a new location before executing. The original code becomes inert decoy.
 
-### Guenzel Clear
-
-A specific clear technique that uses SPL bombs AND DAT sweeping:
-
-```
-clear   spl    #0, >ptr      ; SPL bomb: forces enemy to fork useless process
-loop    mov    clrbomb, >ptr  ; DAT bomb: kills processes
-        djn.f  loop, >ptr    ; advance and repeat
-```
-
-The SPL bomb at the start serves dual purpose: (1) dilutes enemy processes, (2) creates a "process wall" — enemy processes that execute the SPL spawn children near the SPL, which then execute surrounding DATs. It's more effective than pure DAT bombing because it actively corrupts enemy process distribution.
-
-### P-Space (Persistent Memory)
-
-P-space is 500 cells of memory that persists between rounds. P[0] stores the previous round's result (0=loss, 1=tie, 2=win). P[1]-P[499] are available for the warrior.
-
-**Switcher warriors** use P-space to change strategy based on prior results: "I lost last round using strategy A → try strategy B this round." This is the most practical P-space use.
-
-**Implementation:**
-```
-ldp.ab  #0, result    ; load previous result into 'result'
-result  jmz    strat_a ; if lost (0), try strategy A
-        jmp    strat_b ; otherwise try strategy B
+```redcode
+boot    mov  {src, <dst           ; backward copy
+        djn.b boot, count
+        jmp  @dst                 ; jump to copy
+src     dat  end+1, 0
+dst     dat  target, 0
+count   dat  length, length
 ```
 
-P-space enables reactive play. A scanner that lost might switch to a paper fallback. A paper that lost might switch to a scanner. The warrior adapts to the opponent across a multi-round match.
+**Benefits:**
+- Enemy qscans and scanners find the boot code (inert DATs), not your running warrior
+- Can set distance to avoid enemy bombing patterns
+- The boot code doubles as a decoy
 
-**State machines:** More complex P-space strategies track multiple rounds, implementing a finite state machine: "If I lost twice with scanner, try clear/imp. If that lost, try paper. If paper won, stick with it." The 500-cell P-space is more than enough for sophisticated state tracking.
+**Boot distance:** Typically boot to a random-ish offset. Common: ~3000-4000 cells from load point.
 
-**Handshake:** Two copies of the same warrior can detect each other via P-space. Both write to a known P-space location, then read it. If the value matches, they know they're the same warrior → play passively (imp ring) to guarantee ties. This is valuable in tournament formats.
+**Boot speed:** Every cycle spent booting is a cycle not attacking. For 20-instruction warriors: ~20 cycles to boot. For larger warriors: the boot delay may not be worth the stealth benefit.
+
+#### P-Space (Persistent Memory)
+
+94nop hills typically DISABLE P-space (despite the name "94nop" suggesting NOP extension only). Check your hill rules. When available:
+
+- **P[0]** stores previous round result: 0=loss, 1=tie, 2=win
+- **Switcher:** On loss, change strategy. On win, keep strategy.
+- **P^2 (Paulsson):** Table-based DFA using SLT to select from a state table
+- **Handshake:** Detect if fighting yourself → play imp (guaranteed tie)
+
+#### Hybrid Architectures (The Competitive Meta)
+
+The top competitive warriors are ALL hybrids. Analysis of the 94nop Hall of Fame:
+
+| Architecture | % of Top Warriors |
+|-------------|-------------------|
+| Q + Stone/Imp | ~35% |
+| Q + Paper/Stone | ~25% |
+| Q + Paper/Imp | ~15% |
+| Q + Scanner/Clear | ~10% |
+| Pure Paper | ~5% |
+| Vampire | ~5% |
+| Other | ~5% |
+
+**Stone/Imp hybrid:** The most successful architecture. Stone bombs aggressively while imp ring provides tie insurance. If the stone kills the enemy: win. If the stone fails: imps survive for a tie. Minimal losses.
+
+**Paper/Stone hybrid:** Paper replicates for survival while stone bombs for kills. The paper component survives enemy scanning; the stone component kills enemies the paper can't.
+
+**Key design principle:** Every competitive warrior needs BOTH an offensive component (to win) AND a defensive component (to not lose). Stone/imp and paper/stone excel because they combine offense + defense naturally.
 
 ### Advanced Techniques
 
-**DJN streams:** A continuous stream of `djn` instructions that decrement a target location every cycle. Used in clear routines to create "process traps" — if an enemy process enters the djn stream zone, it gets caught in a decrement loop that eventually kills it.
+**Decoys:** Dead code placed to absorb enemy scanner hits. The enemy wastes cycles clearing inert instructions while your real code operates elsewhere.
 
-**Decoy makers:** Warriors that scatter non-DAT instructions across the core. These waste enemy scanner attacks — the scanner detects the decoy, spends cycles clearing it, while the real warrior operates elsewhere. With 5040 instructions, a warrior can place hundreds of decoys.
+**DJN streams:** A zone of `djn` instructions that trap enemy processes in decrement loops:
+```redcode
+        djn  0, <-10             ; enemy entering this zone gets trapped
+        djn  0, <-10
+        djn  0, <-10
+```
+Processes caught in the stream decrement a shared counter until it reaches 0, then fall through to a DAT. Effective as a process trap zone.
 
-**Core-clear:** Rather than scanning for enemies, a core-clear warrior systematically wipes the entire core clean with DAT bombs. Uses parallel processes (via SPL tree) to clear from multiple positions simultaneously. Effective against papers and stones; weak against scanners that find the clear warrior before it finishes.
+**Airbag technique:** Include code that self-destructs gracefully when attacked. Instead of crashing chaotically, the warrior detects damage and switches to an imp ring for tie insurance.
 
-**Self-splitting warriors:** Fork processes to run multiple strategies simultaneously. Common: SPL tree → half processes run scanner, half run imp ring. The cost is process dilution (each process runs at 1/N speed), but the coverage of two strategies can be worth it.
+**Process management:** Understand your process queue. With SPL, each fork halves execution speed. A warrior with 8 processes runs each at 1/8 speed. Use SPL only when ALL processes contribute to the strategy (e.g., 32-process core clear where every process bombs).
 
-## Prior Research Results
+### Common Competitive Patterns
 
-These experiments have been run on this exact 25,200 core. Study the results to avoid repeating dead ends and to build on what worked.
+**The 100-instruction budget:** With MAXLENGTH=100, every instruction is precious. Competitive warriors typically allocate:
+- 8-16 instructions: Qscan preamble
+- 5-10 instructions: Boot code
+- 15-30 instructions: Main strategy (scanner, paper, or stone)
+- 5-15 instructions: Clear/attack mechanism
+- 5-10 instructions: Imp ring launcher
+- 10-20 instructions: Data cells and spacing
 
-### What Worked
+**Bomb color:** Your bombs should have non-zero, non-standard field values. This makes them harder for enemy scanners to distinguish from your actual code, wasting enemy scanning time on your bomb trail.
 
-**Oneshot scanner (step=9001):** 21 instructions. Scans at 2 instructions per check. Beats all current meta opponents (56-60% vs scanners, 40-48% vs papers). Won #1 on competitive ladder. Its strength is TINY footprint — nearly invisible to enemy scans. Prime step = full core coverage.
+**Self-modifying code:** Many optimizations involve instructions that modify themselves during execution. The oneshot scanner's `add inc, scanptr` modifies the `sne` instruction's operands. Self-modification is a core technique in competitive Redcode.
 
-**Guenzel clear + imp (Dustfall):** SPL tree → 32 processes. Half run Guenzel clear, half run imp ring (spacing 2291). Results: 90% vs stones, 81% vs paper+bomber, 58% vs scanners, 72% ties vs papers. Dominant against stones and papers. Imp ring provides tie insurance. Clear sweeps the ENTIRE core in ~788 cycles.
+### Prior Research (25200 Core)
 
-**Qscan → Scanner OR Clear/Imp (DustfallQS):** 5-pair quickscan routes to either oneshot scanner or Guenzel clear+imp. Best generalist: 70% vs some scanners, 46% vs papers, 52% vs stones. The routing decision fundamentally changes the archetype, even with low qscan hit rates.
+Our previous experiment on the 25,200-cell Modelwar.ai core (584 experiments) produced these insights:
+- **SPL trap fields** (filling unused instruction space with `spl #0, #0`) provided massive concealment + bomb absorption
+- **Dense small steps** (step=21, GCD=21) outperformed coprime steps in the trap field context
+- **Single-bomb clear** (1 MOV per 2-instruction loop) beat double-bomb by delivering the first bomb 33% faster
+- **Zero core modification** in the scan loop maximized stealth
+- **mov.b for gate writes** preserved trap opcode at the gate cell for better concealment
+- **A-indirect (*) mode** was required for MOV bomb copying in pmars-ts (direct $ mode produced different behavior)
+- Final score: 2.941 at 20000r (+24.2% from baseline)
 
-**Key step sizes found to be strong:** 7211 (breakthrough value, +8.9% improvement), 9001, 4201, 5039. All prime. The specific value of 7211 was discovered through empirical testing and outperformed 167 other primes tested.
-
-### What Failed (and WHY — study these failure modes)
-
-**Temporal detection (Shapeshifter):** Probe random locations, wait, probe again — detect opponent by movement. FAILED because in 25200 core, a 21-instruction warrior occupies 0.08% of cells. Random probes have negligible hit probability. Would need ~2500 probes for 50% detection. Any detection scheme requiring random hits is broken at this core size.
-
-**Corruption bombs (imp/ADD/SUB):** Using `mov.i #0, 1` (imp instruction) as bombs instead of DAT. Creates TIES not wins — target processes become imps that survive indefinitely. DAT is strictly better because it KILLS. Any bomb that allows the target process to survive creates ties.
-
-**Vampire (JMP fangs):** Place JMP instructions as "fangs" to capture enemy processes. FAILED because enemy processes don't execute fangs — scanners/papers/stones have tight PC loops (3-4 instructions). Their PCs never land on our fang locations. Vampires only work against wandering/corrupted PCs.
-
-**Multi-rate bomber (parallel bombing threads):** Fork 3 processes bombing at different step sizes. FAILED due to process dilution: with N processes, each bombs at 1/N rate. Total bombing rate is IDENTICAL to single-threaded. Multi-threading interleaves coverage without increasing rate.
-
-**Paper + bomber hybrid:** Paper with a dedicated DAT bombing thread. FAILED because the bomber thread at 1/N speed is negligible. Against other papers it changes nothing (100% ties). The bomber needs enough speed to matter, which process dilution prevents.
-
-**Massive quickscan (100+ probes):** 300+ instruction qscan for high detection. PARTIALLY WORKED against papers/stones (46-53%), but the huge code size makes the warrior a barn door for enemy scanners. The qscan code itself becomes the weakness.
-
-### Architectural Laws of the 25200 Core
-
-1. **Sparsity dominates.** A 21-instruction warrior occupies 0.08% of 25200 cells. Random probing fails. Only systematic scanning works. Small footprint = survival advantage.
-
-2. **Process dilution always costs.** Every SPL halves process speed. The ONLY designs that overcome this are when ALL processes do the SAME thing (32 clear processes = 32× area coverage, not 1/32 speed penalty each).
-
-3. **The RPS triangle is inescapable.** Scanner > Paper > Stone > Scanner. No single warrior beats all three types. Qscan routing and P-space switching are the only tools for adapting. The optimal warrior is a hybrid that routes to the right counter-strategy.
-
-4. **Compact + fast beats clever.** Every instruction added makes you larger, easier to find, slower to boot. The 21-instruction Oneshot25k is nearly invisible. A 300-instruction warrior is a barn door. Elegance = maximum effect from minimum code.
-
-5. **DAT kills, everything else doesn't.** Only DAT bombs reliably win games. SPL, JMP, ADD bombs create interesting effects but ultimately lead to ties or slower kills. Build around DAT.
+These findings may or may not transfer to the standard 8000/100 arena. The dramatically different core size and instruction limit create a completely different strategic landscape.
 
 ## Experimentation
 
@@ -335,23 +411,24 @@ Example:
 ```
 commit	avg_score	status	rounds	description
 a1b2c3d	1.285300	keep	200	baseline
-b2c3d4e	1.312400	keep	200	increase scanner step to 4201
+b2c3d4e	1.312400	keep	200	increase scanner step to 3044
 c3d4e5f	1.195000	discard	200	switch to pure paper strategy
-d4e5f6g	0.000000	crash	200	removed too many DAT spacers (assembly failed)
-e5f6g7h	1.352100	keep	2000	step=7211 confirmed at high rounds
+d4e5f6g	0.000000	crash	200	assembly failed
+e5f6g7h	1.352100	keep	2000	step=3044 confirmed at high rounds
 ```
 
 ## The Experiment Loop
 
-Work on a dedicated branch (e.g. `autoresearch/mar16`).
+Work on a dedicated branch (e.g. `autoresearch/mar17`).
 
 LOOP FOREVER:
 
 1. Look at the git state: the current branch/commit
 2. Decide on an experiment. Consider:
-   - Parameter changes (step size, gap, dec, ptr, ispacing, bomb values)
+   - Parameter changes (step size, gap, dec, ptr, spacing, bomb values)
    - Architectural changes (different scan patterns, clear strategies, bomb types)
    - Completely different warrior types (paper, stone, hybrid)
+   - Adding/removing components (qscan, boot, imp backup, decoys)
    - Removing complexity (simpler warriors that score equally are better)
 3. Modify `warrior.red` with your change
 4. git commit
@@ -366,39 +443,28 @@ LOOP FOREVER:
 
 **You are a researcher, not a parameter tuner.** Don't just tweak numbers from a checklist. The best experiments come from understanding HOW the game works and designing warriors that exploit specific mechanics.
 
-**Study the opponents.** Read every .red file in opponents/. Understand what each one does, how it wins, how it loses. Ask: what would beat THIS specific opponent? Where is it vulnerable? What assumptions does it make? Design warriors that exploit those weaknesses.
+**Study the opponents.** Read every .red file in opponents/. Understand what each one does, how it wins, how it loses. Ask: what would beat THIS specific opponent? Where is it vulnerable? What assumptions does it make?
 
-**Think adversarially.** Your warrior fights 6 different opponents. Look at which ones you're losing to worst. What would a warrior specifically designed to beat that opponent look like? Can you build something that targets your weakest matchup without sacrificing other matchups?
+**Think adversarially.** Look at which opponents you're losing to worst. What would a warrior specifically designed to beat that opponent look like? Can you build something that targets your weakest matchup without sacrificing other matchups?
 
-**Try radically different approaches.** The seed warrior is a scanner/clear hybrid. That's ONE approach. Consider:
-- What if you didn't scan at all? Pure bombing, pure replication, pure defense.
-- What if the warrior adapted mid-fight? (SPL into multiple strategies running simultaneously)
-- What about a vampire — overwriting opponent code to turn their processes into YOUR processes?
-- What about a tiny warrior (< 10 instructions) that's hard to find and hard to kill?
-- What about using the full 5,040 instruction limit? Most warriors are small. What advantage does size give?
-- What about a warrior that does nothing but create an imp ring so dense that no bomber can clear it?
-- What if you studied how the clear_imp opponent works and built something that specifically survives its bombing pattern?
+**The competitive meta:** The top 10 all-time 94nop warriors are your opponents. They use Q^4 quickscans, stone/imp hybrids, paper/stone combinations, and sophisticated multi-component architectures. To beat them, you need to either:
+1. Build a better version of their architecture (optimize harder)
+2. Find an architecture they're weak against (exploit the meta)
+3. Combine strategies they can't handle simultaneously (innovate)
 
-**Alternate between exploitation and exploration.** Spend some experiments tuning what works (parameter changes to the current best). Then spend some experiments trying something completely different (new architecture, new strategy, new concept). The breakthrough might come from either direction.
+**Try radically different approaches.** Consider:
+- What if the warrior adapted mid-fight? (SPL into multiple strategies simultaneously)
+- What about a vampire — can JMP fangs work against these specific opponents?
+- What about boot-copying to avoid qscan detection?
+- What about a paper that's specifically designed to survive stone/imp attacks?
+- What about a tiny warrior that's invisible to qscans (< 20 instructions)?
+- What about exploiting the instruction limit — can you fit MORE strategy into 100 instructions than the opponents?
 
-**When tuning parameters**, keep these in mind:
-- Scanner step sizes MUST be prime (coprime to 25,200 for full coverage). Try many different primes — the specific value matters.
-- Bomb patterns interact with indirect addressing modes in non-obvious ways. Small changes can be catastrophic or transformative.
-- DAT spacing, clear decrement, imp spacing all affect coverage patterns.
-
-**When trying new architectures**, draw inspiration from:
-- Classic Core War literature: vampires, mirrors, pit-trappers, multi-component warriors
-- Opponent-specific counters: what kills papers? what kills scanners? what survives clearing?
-- Combinations nobody has tried: what if a stone ALSO had an imp? what if a paper ALSO scanned?
-- Defensive strategies: warriors that are hard to find (small footprint), hard to kill (redundant copies), or hard to damage (self-repairing)
-
-**What to avoid** (known dead ends from prior research):
-- Non-prime step sizes: guaranteed incomplete core coverage at 25,200
-- The specific 0.66c scanner pattern with step=37: covers only 1/681 of this core
+**Alternate between exploitation and exploration.** Spend some experiments tuning what works. Then spend some experiments trying something completely different. The breakthrough might come from either direction.
 
 **Simplicity criterion**: All else being equal, simpler is better. A small improvement that adds ugly complexity is not worth it. Removing code and getting equal or better results is a great outcome.
 
-**Confirmation protocol**: When you find an improvement at 200 rounds, ALWAYS re-run at 2000 rounds before declaring it real. About 50% of 200-round "improvements" are statistical noise. Small gains (< 0.02 avg_score at 200r) are especially suspect.
+**Confirmation protocol**: When you find an improvement at 200 rounds, ALWAYS re-run at 2000 rounds before declaring it real. About 50% of 200-round "improvements" are statistical noise.
 
 ## Important Notes
 
