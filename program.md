@@ -23,25 +23,32 @@ Once you get confirmation, kick off the experimentation.
 
 Core War is a competitive programming game where programs ("warriors") battle inside a shared circular memory space. Warriors are written in Redcode assembly (ICWS '94 standard). They try to crash each other by overwriting opponent code with invalid instructions.
 
-**Arena parameters (fixed — match modelwar.ai):**
+**Arena parameters (configurable via `--arena` flag):**
 
-| Parameter | Value |
-|-----------|-------|
-| Core size | 25,200 cells |
-| Max warrior length | 5,040 instructions |
-| Max cycles per round | 252,000 |
-| Max processes | 25,200 |
-| P-Space size | 500 |
+| Parameter | Standard 94nop (default) | Modelwar.ai 25200 |
+|-----------|-------------------------|-------------------|
+| Core size | 8,000 cells | 25,200 cells |
+| Max warrior length | 100 instructions | 5,040 instructions |
+| Max cycles per round | 80,000 | 252,000 |
+| Max processes | 8,000 | 25,200 |
+| Min separation | 100 | 100 |
+| P-Space size | 500 | 500 |
 
 ### Critical: Number Theory
 
-25,200 = 2² × 3² × 5² × 7
+The core size factorization determines the strategy landscape.
 
-This factorization determines the entire strategy landscape:
+**Standard 8,000 core:** 8,000 = 2⁶ × 5³
 
-- **Scanner step sizes MUST be coprime to 25,200** — otherwise the scanner can never visit the full core.
-- Any step divisible by 2, 3, 5, or 7 leaves blind spots. For example, step=3039 (divisible by 3) only covers 8,400 of 25,200 cells.
-- **Use prime numbers ≥ 11 for step sizes.** Primes are always coprime to 25,200, guaranteeing full core coverage.
+- Scanner step sizes MUST be coprime to 8,000 — otherwise the scanner can never visit the full core.
+- Any step divisible by 2 or 5 leaves blind spots.
+- **Use prime numbers ≥ 3 (excluding 5) for step sizes.** Primes like 3, 7, 11, 13, etc. guarantee full coverage.
+- Common competitive steps: 3044, 2389, 5039 (all prime).
+
+**Modelwar.ai 25,200 core:** 25,200 = 2² × 3² × 5² × 7
+
+- Steps divisible by 2, 3, 5, or 7 leave blind spots.
+- **Use prime numbers ≥ 11 for step sizes.** Primes are always coprime to 25,200.
 - Not all primes are equally effective — the specific value matters due to interaction with warrior layout and bomb spacing.
 
 ### Redcode Quick Reference
@@ -270,16 +277,33 @@ Each experiment modifies `warrior.red` and runs it against the fixed opponent su
 ## Running the Evaluation
 
 ```bash
-node evaluate.cjs warrior.red           # Quick eval (200 rounds, ~15-30 seconds)
-node evaluate.cjs warrior.red 2000      # Full confirmation (2000 rounds, ~3 minutes)
+node evaluate.cjs warrior.red                # Quick eval (200 rounds, standard 8000/100 arena)
+node evaluate.cjs warrior.red 2000           # Full confirmation (2000 rounds)
+node evaluate.cjs warrior.red 200 --arena 25200,5040,252000,25200,100,500   # Custom arena
 ```
+
+### Arena Configuration
+
+The evaluator defaults to the **standard 94nop hill** (coreSize=8000, maxLength=100). You can override with `--arena`:
+
+```
+--arena coreSize,maxLength,maxCycles,maxProcesses,minSeparation,pSpaceSize
+```
+
+| Preset | Arena Parameters |
+|--------|-----------------|
+| Standard 94nop (default) | `8000,100,80000,8000,100,500` |
+| Modelwar.ai 25200 | `25200,5040,252000,25200,100,500` |
+
+### Output Format
 
 The script outputs machine-readable results on stdout:
 ```
 avg_score:    1.234567
-total_points: 7.4 / 18.0
-opponents:    6
+total_points: 7.4 / 30.0
+opponents:    10
 rounds:       200
+arena:        8000/100
 ```
 
 Detailed per-opponent breakdown is printed to stderr.

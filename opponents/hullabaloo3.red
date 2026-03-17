@@ -1,71 +1,63 @@
 ;redcode-94nop
-;name Maelstrom
+;name Hullab3loo
 ;author Roy van Rijn
-;strategy qScan into impPaper & coreclearingPaper
 ;assert 1
 
-bDist1  equ     996
-bDist2  equ     5354
+pStep1  equ     561
+bStep1  equ     7157
+
+sAway   equ     4854
+pAway   equ     562
 
 zero    equ     qbomb
 
 qtab3   equ     qbomb
 qbomb   dat     >qoff           , >qc2
-        dat     0               , 0
 
-pGo     spl     1               , <qb1
-qtab2   spl     1               , <qb2
-        spl     1               , <qb3
+wGo     mov     hBomb           , wGo+sAway+6+hOff
+        spl     }2              , }qb1
+qtab2   spl     1               , }qb2
+        spl     0               , }qb3
 
-        mov     {pap2           , {1
-pBoot1  spl     bDist1          , }5747
+        mov     <dGo            , {dBoo
+dBoo    spl     wGo+sAway+6     , <1719
+        mov     {pEnd           , {pBoo
+        spl     *-2             , <7101
+pBoo    djn.f   wGo+pAway+6     , <821
 
-        mov     {pap            , {1
-pBoot2  djn.f   bDist2          , }4584
-
-for     8
-        dat     0               , 0
-rof
-
-        dat    zero-1           , qa1
-qtab1   dat    zero-1           , qa2
-
-for     5
+for     7
         dat     0               , 0
 rof
+        dat     zero-1          , qa1
+qtab1   dat     zero-1          , qa2
 
-iStep   equ     1143
-pStep   equ     7342
-sStep   equ     5965
-
-pap2    spl     @8              , <pStep
-        mov.i   }-1             , >-1
-pStone  spl     #0
-        mov     bomb            , >ptr
-        add.x   imp             , ptr
-ptr     jmp     imp-iStep*8     , >sStep-6
-bomb    dat     >1              , }1
-imp     mov.i   #sStep-1        , iStep
-
-
-for     3
         dat     0               , 0
-rof
 
-nstep1  equ     2413
-cstep1  equ     4704
-tstep1  equ     3278
+hStep   equ     17
+hTime   equ     7485
+hDjn    equ     2926
+hOff    equ     7735
 
-pap     spl     @8      , }tstep1
-        mov.i   }-1     , >-1
-nothA   spl     cstep1  , 0
-        mov.i   >-1     , }-1
-nothB   spl     @0      , }nstep1
-        mov.i   }-1     , >-1
-        mov.i   #1138   , <1
-        djn.b   -2      , #1618
+dGo     spl     #0              , 6
+        mov     hBomb+hOff      , @hPtr
+hHit    add     #hStep*2        , hPtr
+hPtr    mov     hBomb+hOff      , }hHit-hStep*hTime
+        djn.f   -3              , {hDjn
+        dat     0               , 0
+hBomb   dat     }hStep          , >1
 
-for     22
+        dat     0               , 0
+        dat     0               , 0
+
+pGo     spl     pStep1		, {3
+        mov     }2		, }-1
+        mov     pBmb		, >bStep1
+        mov     3		, }-3
+        jmz.f   -4		, *-1
+pBmb    dat     <5334		, <2667
+pEnd    dat     0		, 0
+
+for     29
         dat     0               , 0
 rof
 
@@ -75,20 +67,22 @@ qb2     equ ((1+(qtab2-qptr)*qy)%CORESIZE)
 qb3     equ ((1+(qtab2+1-qptr)*qy)%CORESIZE)
 qa1     equ ((1+(qtab1-1-qptr)*qy)%CORESIZE)
 qa2     equ ((1+(qtab1-qptr)*qy)%CORESIZE)
-qz      equ 2108
-qy      equ 243         ;qy*(qz-1)=1
 
+qy      equ 5931
+qz      equ 3972
 
 ;q0 mutation
-qgo     sne     qptr+qz*qc2     , qptr+qz*qc2+qb2
+qgo
+
+        sne     qptr+qz*qa1     , qptr+qz*qa1+qb2
+        seq     <(qtab1-1)      , qptr+qz*(qa1-1)+qb2
+        djn.a   q0              , {q0
+        sne     qptr+qz*qc2     , qptr+qz*qc2+qb2
         seq     <qtab3          , qptr+qz*(qc2-1)+qb2
         jmp     q0              , }q0
         sne     qptr+qz*qa2     , qptr+qz*qa2+qb2
         seq     <qtab1          , qptr+qz*(qa2-1)+qb2
         jmp     q0              , {q0
-        sne     qptr+qz*qa1     , qptr+qz*qa1+qb2
-        seq     <(qtab1-1)      , qptr+qz*(qa1-1)+qb2
-        djn.a   q0              , {q0
                                         ;q1 mutation
         sne     qptr+qz*qb3     , qptr+qz*qb3+qb3
         seq     <(qtab2+1)      , qptr+qz*(qb3-1)+(qb3-1)
@@ -96,10 +90,10 @@ qgo     sne     qptr+qz*qc2     , qptr+qz*qc2+qb2
         sne     qptr+qz*qb1     , qptr+qz*qb1+qb1
         seq     <(qtab2-1)      , qptr+qz*(qb1-1)+(qb1-1)
         jmp     q0              , {q1
-
         sne     qptr+qz*qb2     , qptr+qz*qb2+qb2
         seq     <qtab2          , qptr+qz*(qb2-1)+(qb2-1)
-        jmp     q0
+        djn.f   q0              , <6907
+
                                         ;qz mutation
         seq     >qptr           , qptr+qz+(qb2-1)
         jmp     q2              , <qptr
@@ -110,9 +104,9 @@ qgo     sne     qptr+qz*qc2     , qptr+qz*qc2+qb2
         jmp     q0              , {q0
         seq     qptr+(qz+1)*(qa1-1),qptr+(qz+1)*(qa1-1)+(qb2-1)
         djn.a   q0              , {q0
-        jmz.f   pGo             , qptr+(qz+1)*(qb2-1)+(qb2-1)
+        jmz.f   wGo             , qptr+(qz+1)*(qb2-1)+(qb2-1)
 
-qoff    equ     -86
+qoff    equ     -87
 qstep   equ     -7
 qtime   equ     19
 
@@ -123,6 +117,5 @@ q1      add.b   qtab2           , qptr
 qptr    mov     qbomb           , }qz
         sub     #qstep          , qptr
         djn     -3              , #qtime
-        djn.f   pGo             , #0
+        jmp     wGo             , <855
 end qgo
-
