@@ -1,0 +1,585 @@
+commit	avg_score	status	rounds	description
+186c094	2.367500	keep	200	baseline: Pyre qscan+scanner/clear+imp hybrid
+3d65114	2.354167	discard	200	scanner step 3037 → 7211
+e14d4c9	2.442500	keep	200	scanner step 3037 → 4201
+772305e	2.353333	discard	200	scanner step 4201 → 9001
+a21c66a	2.449167	discard	200	scanner step 4201 → 5039 (marginal, within noise)
+2a2f7a8	2.449167	discard	200	scanner gap 9 → 7 (noise)
+81417e7	2.442500	discard	200	pure scanner no qscan (equal but worse paper matchup)
+73e587b	2.391667	discard	200	clear dptr 8200 → 4200
+4c6426f	2.552500	keep	200	clear dptr 8200 → 12600
+011bafc	2.411667	discard	200	clear dptr 12600 → 15000 (too long, creates ties)
+d4a8837	2.520000	discard	200	clear dptr 12600 → 10500
+59690a2	2.545833	discard	200	clear dptr 12600 → 13800
+4c6426f	2.557333	keep	2000	dptr=12600 confirmed at 2000 rounds
+83b5e93	2.469167	discard	200	bptr B-field 11 → 13
+06e92fe	2.585000	keep	200	triple-bomb clear loop (3 mov per iteration)
+f08c2ec	2.447500	discard	200	quad-bomb clear loop (too slow per iteration)
+ab43120	2.539167	discard	200	scanner gap 9 → 11
+ddab7ef	1.524167	discard	200	DAT bombs instead of SPL (broke clear mechanism)
+88a5422	2.489167	discard	200	step 4201 → 5039
+2b61553	2.385833	discard	200	step 4201 → 3571 (scanner_clear collapsed)
+a03afcc	2.495833	discard	200	step 4201 → 4219 (scanner_clear dropped)
+1c97157	2.576667	discard	200	route all qscan to clear/imp (noise)
+ae6ca0b	2.474167	discard	200	step 4201 → 4211
+afc48cc	2.590000	keep	200	reduced DAT padding 5→3
+95f8f63	2.528333	discard	200	DAT padding 3→2 (too fragile)
+0f4b801	2.405833	discard	200	step 4201 → 4243
+1c361cb	2.536667	discard	200	stripped pure scanner (no qscan/fallback)
+b6a8905	2.532500	discard	200	clear/imp padding 15→5, 26→10
+88c37f5	2.530833	discard	200	SPL entry for scanner+imp (process dilution)
+afc48cc	2.570500	keep	2000	current best confirmed: step=4201, dptr=12600, triple-bomb, pad=3
+6d762ad	2.466667	discard	200	step 4201 → 4157
+5fa1e3f	2.500833	discard	200	SPL bomb predecrement splash
+48d821c	2.532500	discard	200	mixed bombs 2 SPL + 1 DAT
+5502875	0.000000	crash	200	P-space switcher (assembly error)
+6f08ce4	2.546667	discard	200	P-space switcher (fixed, overhead too high)
+b3e0062	2.499167	discard	200	step 4201 → 6011
+3644670	1.464167	discard	200	wobbling scan step-1=4200 (not coprime\!)
+a886db2	2.456667	discard	200	wobbling scan prime B (disrupts mechanism)
+780e130	2.545833	discard	200	qscan reduced to 1 pair (lost paper performance)
+970000b	2.558333	discard	200	qstep 9001 → 4201
+a81db95	2.562500	discard	200	dptr 12600 → 13000
+7df4566	2.555833	discard	200	plant decoys at 5000/10000
+86afa95	2.350000	discard	200	step 4201 → 4177 (scanner_clear collapsed)
+dc0c174	2.534167	discard	200	scanner gap 9 → 100
+839940a	1.341667	discard	200	bidirectional clear (self-destructive)
+b30809d	2.585000	discard	200	gap 9 → 5 (noise)
+63d4c3f	2.554167	discard	200	dptr B-field 9 → 11
+9a19158	2.561333	keep	2000	final confirmation: step=4201 dptr=12600 triple-bomb pad=3
+35cb5b7	2.579167	discard	200	bombing scanner (33% slower scan)
+bd35a6f	2.557500	discard	200	DAT padding 3 → 4
+20e95d8	2.423333	discard	200	pure Dustfall clear/imp (scanner hybrid better)
+8d3325c	2.535833	discard	200	early SPL bomb before clear (transition delay)
+169946b	2.420833	discard	200	step 4201 → 4297 (scanner_clear collapsed)
+25bd828	2.592500	keep	200	dptr.B 9→11 (with correct step=4201)
+bc7845b	2.521667	discard	200	dptr 12600→13000 with B=11
+ff773f1	2.520833	discard	200	bptr.B 11→9
+3b92123	2.555833	discard	200	dptr.B 11→13
+25bd828	2.558917	discard	2000	dptr.B=11 not better at 2000r
+9e5157b	2.544167	discard	200	gap 9→13
+ef258c5	2.540000	discard	200	qgap 7→11
+087fbc8	2.595833	keep	200	P-space switcher: scanner default, clear/imp on loss
+087fbc8	2.566750	keep	2000	P-space switcher confirmed
+2a30b68	2.579167	discard	200	P-space step switcher 4201/3571
+c92e77a	2.548333	discard	200	dptr.A 12600→12601
+de0d4cd	2.533333	discard	200	gap 9→17
+e128fe1	2.591667	discard	200	reduced clear/imp padding (noise, -0.004)
+3a8f55e	2.552500	discard	200	double-bomb clear/imp fallback
+c7f8d5b	2.548333	discard	200	clear/imp ptr offset 300→500
+2e86971	2.600000	keep	200	ispacing 2291→5039
+f58f17e	2.577500	discard	200	ispacing 5040 (not coprime\!)
+b7ce5a2	2.514167	discard	200	ispacing 5039→4201
+f5d6aa9	2.573333	discard	200	ispacing 5039→5051
+2e86971	2.559750	discard	2000	ispacing 5039 regressed at 2000r
+792613b	2.533333	discard	200	SPL tree 5→4 levels (weaker)
+86aeee0	2.597500	discard	200	P-space tie-switching (noise)
+e3fe866	2.572500	discard	200	P-space non-win switching (ties hurt)
+6e6aa81	2.563333	discard	200	lstep B-field -10→-20
+e20faff	2.576667	discard	200	jmp scan after clear (process contention)
+087fbc8	2.570500	keep	2000	final confirmation of best warrior
+7666159	2.570833	discard	200	gap 19→9 (gap=19 was better\!)
+3884346	2.489167	discard	200	step 4201→4217 (great vs clear_imp, bad vs scanner_clear)
+207d163	2.555000	discard	200	P-space step switcher 4201/4217 (overhead kills benefit)
+1503ad5	2.555833	discard	200	clrbomb <2667,<2667 (stone dropped)
+6f3d182	2.483333	discard	200	step 4201→4203 (NOT coprime: 9*467)
+c8dff57	2.576667	discard	200	bptr.B 11→7 (noise)
+974dc79	2.550833	discard	200	dptr 12600→12400
+a2d6566	2.106667	discard	200	ultra-compact 14-instr scanner (no robustness)
+ee9340c	0.505000	crash	200	boot-copy broken (wrong jump target)
+5316a1a	2.558333	discard	200	SPL tree 6 levels (64 procs, more dilution)
+130d5cb	2.572500	discard	200	clear/imp ptr 300→150 (noise)
+63e3030	2.540000	discard	200	ispacing 2291→3571
+e5ee0d2	2.598333	keep	200	clear/imp offsets -800/-1600
+8d95906	2.545833	discard	200	offsets -1000/-2000 (too far)
+e5ee0d2	2.553083	discard	2000	offsets -800/-1600 regressed at 2000r
+5f6a371	2.545833	discard	200	qstep 9001→7211
+62ec5c7	2.563333	discard	200	removed P-space (P-space is worth +0.007)
+a314dae	1.357500	discard	200	dptr.B 9→7 (catastrophic clear failure)
+769830f	2.570333	keep	2000	dptr.B=11 marginally better (+0.004)
+a7f5da7	2.573500	keep	2000	dptr.B=13 new best (+0.007 over B=9)
+41d3b28	2.514083	discard	2000	dptr.B=17 (paper collapsed)
+1c7a385	2.558167	discard	2000	bptr.B=13 (bptr.B=11 is better)
+98c43e3	2.507500	discard	200	bptr.B=17 (paper dropped)
+43445a8	2.586667	discard	200	ispacing 2291→2143 (promising but need 2000r)
+434e324	2.590000	discard	200	ispacing 2291→3613
+8588c84	2.565833	discard	200	clrbomb B=13 (noise)
+433bf09	2.552500	discard	2000	dptr.A=12599 (half-core 12600 is better)
+13478bc	2.546667	discard	200	pre-bomb at 12600 (1-cycle delay not worth it)
+428cb19	2.517500	discard	200	dptr.B=19 (confirms B=13 optimal)
+66d6503	2.581917	keep	2000	bptr.B=9 with dptr.B=13 — NEW BEST
+453889b	2.573583	discard	2000	bptr.B=7 (B=9 is better)
+3b7b9d1	2.568083	discard	2000	dptr.B=11 bptr.B=9 (dptr.B=13 better)
+19f9dde	2.554167	discard	200	dptr.B=17 bptr.B=9 (paper drops)
+a659dd8	2.573750	discard	2000	gap=11 with new B-fields (gap=9 better)
+70f638d	2.565000	discard	200	gap 9→3
+090b7ea	2.568333	discard	200	clrbomb <2667→<4201 (noise)
+c8a8b9a	2.561667	discard	200	gate clear_s-3 (clear_s-4 better)
+cdaf047	2.566083	discard	2000	dptr.A=12601 (200r was noise, 12600 better)
+c85dea7	2.572417	discard	2000	bptr.B=11 dptr.B=11 (asymmetric 9/13 better)
+65c3ddc	2.436667	discard	200	step 4201→4229
+08c11f1	0.000000	crash	2000	end→pswitch killed warrior (entry at DAT)
+exp112	2.545167	discard	2000	fixed P-space (-0.037, overhead kills scanner_clear)
+23b139c	2.581667	discard	200	extra decoys (no effect)
+66daf9d	2.559583	discard	2000	removed dead decoy code (decoy worth +0.022)
+638f892	2.559167	discard	2000	larger decoy (footprint too big)
+13386cb	2.574917	discard	2000	5-instruction decoy (7 is optimal)
+dbe551f	2.562500	discard	200	first=scan-1+step (unbalanced tradeoffs)
+ee92b68	2.490000	discard	200	first=inc+step (may corrupt own code)
+c892b73	2.535833	discard	200	scanner-mimicking decoy (original better)
+e9030b6	2.585833	discard	200	qs3→scanner (noise, qscan rarely fires)
+c1cb00e	2.573333	keep	2000	final definitive evaluation
+abd5ee1	2.567500	discard	200	qscan multipliers changed (noise)
+65b4993	2.563417	discard	2000	asymmetric padding 4/3
+62fb250	2.555167	discard	2000	asymmetric padding 3/4
+6dc54bf	2.567583	discard	2000	gate=clear_s-5 (noise)
+9c6ee4e	2.531667	discard	200	dptr.B=29 (paper drops, B=13 peak)
+1754d89	2.545000	discard	200	>gate misses exact detection point
+98e668a	1.756667	discard	200	separated DAT bomb (no process dilution)
+2911201	1.890833	discard	200	spl #0,#0 bomb (dptr values critical)
+59ec458	2.567667	discard	2000	qscan 3→2 pairs (3rd pair worth ~+0.007)
+d51bd13	2.562250	discard	2000	djn.b worse than djn.f (less detection)
+eb18055	2.526667	discard	200	restructured no-qscan warrior
+9c715ca	2.550833	discard	200	add.f explicit (default was already .f)
+4b1f5e8	2.377500	discard	200	add.ab single-pointer (breaks dual-probe)
+b8cce43	2.564250	discard	2000	decoy at end (beginning protects scanner better)
+8e1080c	2.360833	discard	200	{first backward scan (breaks pattern)
+99fa7be	1.511667	discard	200	mov.x corrupts gate
+828f315	1.638333	discard	200	{dptr breaks clear (changing bomb values)
+a7b4d20	2.535833	discard	200	@scanptr B-indirect (A-indirect better)
+47970a7	1.563333	discard	200	paper bomber (replication too slow)
+81fa7ca	2.561667	discard	2000	scattered decoys (startup delay costs too much)
+01ed5da	1.801667	discard	200	core scrambler (ADD doesnt kill)
+ffe1e4c	2.549167	discard	200	double-check detection (verification delay)
+d450202	0.522500	crash	200	removed qhit (broke all relative addresses)
+01ef2fd	2.215000	discard	200	dual-sweep via inc (corrupts scanner)
+c8246ff	2.571250	discard	2000	preemptive ±100 bombs (200r was noise)
+f4bf35a	2.585000	discard	200	djn qhit (functionally identical to jmp)
+a79be4b	1.381667	discard	200	bounded clear (shared counter, process explosion)
+03694be	2.525000	discard	200	mixed SPL+DAT clear (stone up, paper down)
+6907475	2.544167	discard	200	minimal wobble 4201/4199 (still breaks scan)
+b44170b	2.530083	discard	2000	no qscan (paper collapsed, -0.047)
+4179d36	2.568083	discard	2000	4 qscan pairs (extra overhead > detection gain)
+c37c835	2.567333	discard	2000	all qscan→clear/imp (mixed routing better)
+24bec61	2.558583	discard	2000	gap=7 with new B-fields (gap=9 still best)
+2e205cc	2.566833	discard	2000	gap=5 dptr.B=11 combo
+4dbea63	2.560417	discard	2000	gap=5 dptr.B=13 (gap=9 still best)
+9819836	2.553667	discard	2000	flash scan (200r was noise, decoy content matters)
+3e14a7e	2.577583	discard	2000	qgap=9 (identical to qgap=7, +0.001 noise)
+4430fba	2.571417	discard	2000	clrbomb <4201 (noise, fallback rare)
+064d317	2.560833	discard	200	sne.i explicit (confirmed default)
+5ca32eb	2.561667	discard	200	sne.f (identical to .i in practice)
+d14f933	1.301667	discard	200	Tornado 16-proc wiper (same rate as stone)
+5492478	1.007500	crash	200	dual-sweep (>sgate overwrites itself at B=0)
+e2afd4f	2.541667	discard	200	imp after clear (djn.f never terminates)
+847c368	1.352500	crash	200	smart gate JMN (B-field check too restrictive)
+9c31ccb	2.516667	discard	200	SPL <13 splash (self-corruption via djn.f)
+8f2ee05	2.548333	discard	200	decoy trap jmp 0 (original field values better)
+03d7535	2.565500	discard	2000	SPL shield padding (wash: defense = detection cost)
+a886d76	2.551667	discard	200	offset clear +4201 (paper/scanner_clear dropped)
+5cc5889	2.561250	discard	2000	offset clear +100 (noise at 200r)
+b19c8ba	2.569083	discard	2000	negative gap (equivalent in circular core)
+955efb4	1.759167	discard	200	*gate bomb (same cell every iteration)
+9c86b01	2.456667	discard	200	bombing scanner @scanptr (33% scan overhead fatal)
+cd96842	2.570625	discard	2000	qstep=5039 (avg of 2 runs, noise vs 9001)
+a7970f0	2.544167	discard	200	distant decoy at 12600 (startup delay)
+4b30448	2.555917	discard	2000	reversed layout (no advantage in circular core)
+69dcc80	1.522500	discard	200	MOV bomb via bptr.A=2 (no kills, all ties)
+a48e0c2	2.511667	discard	200	Trojan >13 bomb (self-corruption via }dptr)
+ad1bbb3	2.242500	discard	200	step=8401 (3 segments, gaps too large)
+verify	2.569167	note	2000	bptr.B=9 re-measured: 2.569
+verify	2.567833	note	2000	bptr.B=11 re-measured: 2.568 (identical)
+ba695cd	1.580000	discard	200	3-instr clear (gate/loop merge = multi-process interference)
+5ee5622	2.490833	discard	200	minimal 2-instr P-space (still 2 cycles too much)
+631a407	2.516167	discard	2000	dptr.B=23 (paper collapse, B=13 confirmed)
+321ad66	2.423333	discard	200	first=bptr-1+qstep*3 (noise too close to code)
+baa2ca5	2.554083	discard	2000	first=step*2 (GCD=2, half noise coverage)
+918da3f	2.555833	discard	200	first=step*3 (}first always +1, starting pos only)
+13396d7	2.678417	keep	2000	STEP=4207 BREAKTHROUGH: clear_imp 52→82%, +0.121\!\!
+13396d7	2.660750	keep	2000	step=4207 second confirmation: 2.661
+c273fed	2.518333	discard	200	step=4211 (back to normal)
+0ca0585	2.534167	discard	200	step=4219 (clear_imp OK but scanner_clear killed)
+e8ca0ee	2.666583	discard	2000	dptr.B=9 with 4207 (B=11 better)
+023412c	2.655083	discard	2000	gap=11 with 4207
+d376d3a	2.676583	discard	2000	gap=7 with 4207 (gap=9 still best)
+8e90d8b	2.662500	discard	2000	bptr.B=11 with 4207 (bptr.B=9 still best)
+ef7f4dd	2.679250	keep	2000	BEST CONFIG: step=4207, dptr.B=11, bptr.B=9, gap=9
+8fb5c4c	2.529167	discard	200	step=4213 (scanner_clear collapsed)
+8d5d0bc	2.682917	keep	2000	dptr.A=11500 NEW BEST with step=4207
+80d8961	2.683833	keep	2000	dptr.A=10800 NEW RECORD\! scanner_clear 74.2%
+885268a	2.686167	keep	2000	dptr.A=10000 NEW RECORD\!
+ff3acab	2.694917	keep	2000	dptr.A=9000 NEW RECORD\!\! sc=75.2%
+d581214	2.690500	discard	2000	dptr.A=8000 (9000 is peak)
+a89cca0	2.691417	discard	2000	dptr.A=8500
+50d5f48	2.689750	discard	2000	dptr.A=9500
+4382fee	2.313333	discard	200	step=5003 (near opponent step = mutual interference)
+81d5b45	2.429167	discard	200	step=4199 (scanner_clear collapse persists)
+500fd09	2.693167	discard	2000	bptr.B=11 with new config (B=9 still best)
+bc7fe69	2.368333	discard	200	step=3631 (7 segments = bad)
+e931308	2.460833	discard	200	step=4127 (scanner_clear collapse)
+b61f89e	2.693167	discard	2000	dptr.A=8414 (=step*2, equivalent to 9000)
+752aa4f	2.688417	discard	2000	qstep=step (duplicates scanner coverage)
+fb5a3a2	2.674333	discard	2000	ispacing=step (no benefit from alignment)
+3918c5a	2.694833	discard	2000	dptr.B=13 (identical to B=11 with new config)
+b65a905	2.318333	discard	200	step=4193 (scanner_clear 36%)
+4b557e7	2.536667	discard	200	step=4223 (scanner_clear 56.5%)
+22507d3	2.678583	discard	2000	quad-bomb with 4207 (stone dropped -6.6%)
+screen	2.410833	discard	200	step=4151
+screen	2.433333	discard	200	step=4159
+screen	2.398333	discard	200	step=4169
+screen	2.520833	discard	200	step=4231
+screen	2.455000	discard	200	step=4237
+screen	2.478333	discard	200	step=4247
+screen	2.320833	discard	200	step=4181
+screen	2.310833	discard	200	step=4187
+screen	2.310833	discard	200	step=4189
+96d0dda	2.752250	keep	2000	GAP=3 BREAKTHROUGH\!\! scanner_clear 75→88%\! +0.057\!
+2b38073	2.735333	discard	2000	dptr.A=8000 with gap=3 (9000 still best)
+9e6e675	2.737167	discard	2000	dptr.B=17 with gap=3 (200r noise, B=11 best)
+2a44270	2.733750	discard	2000	gap=2 (sc=90.2% record, but ci/st dropped)
+b676778	2.746792	discard	2000	bptr.B=13 (avg matches B=9)
+ff7dcaf	2.745208	discard	2000	first=step-gap (noise)
+7e653fb	2.743333	discard	2000	double-bomb with gap=3 (stone+3% but ci/sc dropped)
+91a5579	2.729667	discard	2000	entry at qs2 (first pair has value)
+3c7dd87	2.733917	discard	2000	padding=4 with gap=3 (200r noise)
+5761877	2.734917	discard	2000	qgap=3 (no benefit from matching scanner gap)
+1337916	2.732250	discard	2000	ispacing=2521 (fallback <2%, noise)
+screen	2.715000	discard	200	11 decoys with gap=3 (7 still optimal)
+adf61a3	1.903333	discard	200	continuous scanner (process queue explosion → ties)
+b381d6b	2.684167	discard	200	one-shot continuous scanner (+2 cycle overhead)
+a83914c	2.730000	discard	2000	dptr.A=9001 (no sharp peak)
+da3a502	1.441667	discard	200	sniper no-clear (3 bombs cant kill)
+d6b434b	2.707500	discard	200	micro-stone (+1 cycle overhead)
+1b9d2fc	2.274167	discard	200	nop }dptr (5-instr loop = 25% slower)
+939984f	2.734833	discard	2000	qs→scan directly (changed noise signature)
+e9cfd64	2.743000	discard	2000	medium multipliers (noise, identical to current)
+5c36bf9	2.427333	discard	2000	SUB scan (effective step=20993, poor early coverage)
+10e9223	1.328333	crash	200	gate=scanptr (bomb wraps hit own scan code)
+4958398	2.746361	keep	2000	gate=clear_s-5 avg of 3 runs: 2.747 (marginal +0.008)
+8629960	2.737250	discard	2000	dptr.B=19 (stone dropped, 200r noise)
+949ce6d	2.732667	discard	2000	SPL shield (sc+1% but ci-3% st-2%)
+24d7477	2.738833	discard	2000	no fallback (distant decoy worth +0.005)
+28e5f29	2.742833	discard	2000	first=step+gap*2 (noise position insensitive)
+5ed4dc2	2.737917	discard	2000	dptr.A=9175 (noise)
+26a4174	2.735583	discard	2000	qstep=8995 (5-factor exploitation, qscan too rare)
+b575ac3	2.734750	discard	2000	ispacing=4207 (still worse with v4)
+fd14c28	2.687083	discard	2000	gap=7 with v4 (gap=3 still strongly optimal)
+054c7fe	2.742750	discard	2000	dptr.A=8414=2*step (identical to 9000)
+0be6e91	2.638333	discard	200	double-check v4 (scanner_clear 66%, timing)
+screen	2.530833	discard	200	step=4221 (9-fold, coverage too small)
+5bd43cc	2.747778	keep	2000	double-bomb+B=17: stone 75→78%, avg 2.748 (3 runs)
+0d7fb50	2.748000	discard	2000	dptr.A=8000 double (same as 9000)
+2394428	2.744583	discard	2000	dptr.A=8414 double
+665835e	2.756278	keep	2000	NEW BEST: gate=-6 + gap=2 + double-bomb+B=17. Avg 2.756 (3 runs). sc=90%\!
+1a59661	2.756500	discard	2000	B=23 (equivalent to B=17, worse stone)
+34f6c27	2.716500	discard	2000	gap=1 (too tight, adjacent cells identical)
+c2b2ec1	2.745250	discard	2000	bptr.B=11 (200r was +0.040 noise spike\!)
+cdbeb08	2.753083	discard	2000	dptr.A=9500 (noise)
+30cd447	2.756042	keep	2000	padding=2 (equivalent to 3, simpler)
+addeb88	2.759167	keep	2000	padding=1 ULTRA-COMPACT. Stone 80.1%\! Avg 2.759 (3 runs)
+ec07c62	2.744083	discard	2000	padding=0 (zero buffer = boundary corruption)
+b632298	2.757417	discard	2000	4-pair no-decoy (decoy effect > footprint savings)
+68131fb	2.754222	discard	2000	B=37 avg 2.754 (below B=17 at 2.759)
+4013357	2.750750	discard	2000	first=bptr+1+step (noise)
+78463a5	2.739167	discard	200	sne.x crossed comparison (less sensitive)
+db1f812	2.738667	discard	2000	djn.a (premature termination, 50 sc ties)
+e3c1fbd	2.753250	discard	2000	qgap=5 (200r noise)
+d25fe25	2.753667	discard	2000	qgap=2 (200r noise)
+253e1a0	2.748333	discard	2000	entry qs1+1 (altered detection logic)
+screen	1.025000	discard	200	djn }bptr (sweep inside own code)
+4eef2eb	2.757000	discard	2000	bptr=11+dptr.B=19 combo (no positive interaction)
+275b8b6	2.756083	discard	2000	seq in decoy (noise)
+screen	2.730833	discard	200	triple+B=11 with gap=2+pad=1 (double-bomb essential)
+76fe470	2.740667	discard	2000	gap=4 v8 (gap=2 still best)
+screen	2.738333	discard	200	compact fallback (dense = worse distant decoy)
+8168ea8	2.748000	discard	2000	dptr.A=step (200r noise, 9000 better)
+screen	2.752500	note	200	A=12345 random (flat in 8000-13000)
+screen	2.555000	discard	200	step=4217 v8 (4207 still dominant)
+90a2fb5	2.757667	keep	2000	restore for 26 (was accidentally for 16, equivalent)
+screen	2.760833	note	200	B=#17 vs $17 (equivalent)
+screen	2.662500	discard	200	step=4214 GCD=14 (coverage too thin at 7.1%)
+screen	2.427500	discard	200	step=4205 GCD=5 (slower cycling + lower density)
+screen	2.749167	note	200	step=29407 mod equivalence confirmed
+screen	2.188333	discard	200	step=5033 7×719 (5-point spacing too wide)
+screen	2.640833	discard	200	gap=step (probes too far apart for front-detection)
+screen	2.770833	note	200	qstep=3463 stone step (qscan noise, not confirming)
+screen	2.457500	discard	200	step=4197 GCD=3 (rotation too slow)
+screen	2.757500	note	200	jmp-scan padding (equivalent, djn.f never terminates)
+screen	2.708333	note	200	step=4204 GCD=4
+screen	2.739167	note	200	step=4206 GCD=6 (close to 4207\!)
+616cc94	2.752083	discard	2000	remove second padding (marginally worse -0.004)
+screen	2.735000	discard	200	inc=nop (DAT kills strays, NOP doesnt)
+screen	2.738333	note	200	swapped qs2/qs3 order (noise)
+b276116	2.874583	keep	2000	***TRAP FIELD BREAKTHROUGH*** 4000 spl traps + scanner. ci=97% sc=93.5% +0.119\!\!\!
+bef9884	2.866417	discard	2000	gap=3 with traps (equivalent to gap=2)
+ee44439	2.848250	discard	2000	trap field + qscan (overhead hurts sc 93→86)
+fef70eb	2.867000	discard	2000	dptr.B=11 trap field (equivalent to B=17)
+screen	2.815833	discard	200	mixed spl+imp traps (boundary self-detection)
+64d965c	2.859083	discard	2000	triple-bomb trap field (stone 72% too low)
+70d42b9	2.851167	discard	2000	reversed trap layout (gate position worse)
+532c6a1	1.653333	discard	200	P-space imp-on-loss (scanning always better than switching)
+d8fc83a	0.000000	crash	200	P-space DAT bug
+b276116	2.870433	keep	10000	FORTRESS DEFINITIVE: ci=96.4% sc=93.8% st=77.4% 10000r
+c073833	2.861500	discard	2000	dptr.A=step with traps (9000 slightly better)
+680830a	2.866917	discard	2000	gap=3 traps (equivalent to gap=2)
+screen	2.843333	discard	200	triple+B=11+traps combo
+screen	2.845833	discard	200	split fortress (more boundaries = worse)
+screen	2.852500	discard	200	trap spl#0,#step (original spl#0,#0 better)
+cdcc2ea	2.876083	keep	2000	5029 max traps: avg 2.876 (+0.009 over 4000 traps)
+cdcc2ea	2.875933	keep	10000	FORTRESS MAX DEFINITIVE: ci=96.6% sc=95.7% st=76.0%
+screen	2.880000	discard	2000	5028 traps + 1 DAT buffer (noise, avg 3 runs)
+screen	2.882417	discard	2000	gate=clear_s-6 with traps (avg 3 runs, noise)
+screen	2.879250	discard	2000	gate=clear_s-5 with traps
+screen	2.879000	discard	2000	gate=clear_s-7 with traps
+screen	1.810833	discard	2000	gate=clear_s-8 CATASTROPHIC (too far from scanner)
+screen	2.877033	discard	10000	gate=clear_s-6 at 10000r: identical to -4 (2.877 vs 2.876)
+screen	2.881417	discard	2000	dptr.B=13 with traps (noise)
+screen	2.876000	discard	2000	first=bptr+step (6 runs avg, noise)
+screen	2.870000	discard	2000	first=bptr+1+step (4 runs avg, below baseline)
+screen	2.870417	discard	2000	first=bptr-2+step (below baseline)
+screen	2.882833	discard	2000	first=bptr+2+step (1 run, noise)
+screen	2.855417	discard	2000	skip Guenzel SPL entry (jmp clear_s not clear_s-1) -0.021
+screen	1.488917	discard	2000	stone-in-trap-field SPL bombs (0% vs scanner/clear_imp)
+screen	1.822250	discard	2000	stone-in-trap-field DAT bombs (still far below scanner)
+screen	2.877250	discard	2000	bptr.B=11 with traps (3 runs avg, noise)
+screen	2.875833	discard	2000	bptr.B=7 with traps (2 runs avg, noise)
+screen	1.695806	discard	2000	djn.b in clear loop CATASTROPHIC (premature termination)
+screen	1.671417	discard	2000	9-cell compact scanner (no bptr/jmp) clear broken—massive ties
+screen	2.870417	discard	2000	boot 20 SPL bombs before scan (startup delay -0.006)
+screen	1.912417	discard	2000	silk paper in trap field (can't kill scanners)
+screen	1.565333	discard	2000	Guenzel clear+imp in trap field (can't reach enemies fast enough)
+screen	2.879167	discard	2000	P-space gap switcher gap=2 to 5 on loss (4 runs avg, noise)
+screen	2.878333	discard	10000	P-space gap switcher at 10000r: +0.002 noise (sc+1.6% st-1.4%)
+screen	2.852833	discard	2000	P-space SPL-to-DAT bomb switch on loss (-0.023, DAT kills worse)
+screen	2.882000	discard	2000	P-space reverse scan on loss (4 runs avg +0.006, noise)
+screen	2.878617	discard	10000	P-space reverse scan at 10000r: +0.003 noise (sc+1.5% st-0.9%)
+screen	1.652833	discard	2000	dptr.A=#0 CATASTROPHIC (spl #X = fork to PC+X, A=0=self-fork chain)
+screen	2.854750	discard	2000	dptr.A=12600 (fork lands near avg enemy position -0.021)
+screen	2.876417	discard	2000	dptr.A=4207 (noise, equivalent to 9000)
+screen	2.878750	discard	2000	dptr.A=6000 (noise)
+screen	2.872750	discard	2000	dptr.A=7000 (noise)
+screen	2.875417	discard	2000	dptr.A=8000 (noise)
+screen	2.876500	discard	2000	dptr.A=10000 (noise)
+screen	2.870750	discard	2000	dptr.A=11000 (dropping, fork approaching enemy zone)
+screen	2.879067	discard	10000	spl $0,$0 traps (direct mode): +0.003 noise (ci+1.9% sc+1.8% st-1.8%)
+screen	2.877000	discard	2000	dual-phase 5 SPL bombs then scan (4 runs avg, noise)
+screen	2.879375	discard	2000	dual-phase 2 SPL bombs then scan (8 runs avg +0.003, noise)
+screen	2.878267	discard	10000	dual-phase 2 bombs at 10000r: avg of 2 runs 2.878, noise +0.002
+screen	2.877333	discard	2000	7-cell decoy scanner at trap field start (noise, +7 detectable cells)
+screen	2.857917	discard	2000	gap=1 with traps (worse -0.018, adjacent cells too tight)
+6be3aa1	2.870667	discard	2000	step=8414 (2x step, GCD=14 only 1800 cells, -0.005)
+026db5b	2.845583	discard	2000	step=8407 (7x1201, too large, only 3 probes before repeat)
+8c349c8	2.869750	discard	2000	gate=clear_s-3 with traps (-0.006)
+9b19ce6	1.531917	discard	2000	P-space imp on loss DEATH SPIRAL (first round=loss→imp→lose→repeat)
+fe3950d	2.877167	discard	2000	spl #0,17 traps (B=17 matches bomb, noise, boundary worse vs empty)
+da2fb20	2.814000	discard	2000	jmp 0,0 traps (-0.062, no process multiplication = linear capture only)
+47f7067	2.870000	discard	2000	dptr spl #9000, #17 (both immediate, -0.006)
+d6443fc	2.828500	discard	2000	add.a scan (A-only advance, no sequential backup, -0.048)
+f9549fe	2.813250	discard	2000	add.b scan (B-only advance, A fixed, -0.063)
+431a59c	2.822083	discard	2000	asymmetric inc 4207/4208 (GCD(4208,25200)=8, -0.054)
+65a6b04	2.753083	discard	2000	naked 11-cell scanner no traps (-0.123, ci-19% confirms trap bomb-absorption)
+20416eb	1.679167	discard	2000	10-cell no-bptr scanner ($-1/$-2 clear) BROKEN again (massive ties)
+screen	1.460833	discard	200	CMP scanner + targeted clear new architecture (gate setup broken)
+0d28076	1.688750	discard	2000	first clear mov $-1 second *bptr: STILL BROKEN (confirms $-mode issue)
+6644c66	2.880500	discard	2000	*-2/*-3 A-indirect (works! confirms *mode essential, $mode breaks copy)
+5120242	2.818417	discard	2000	nop #0,#0 traps (-0.058, enemy passes through untrapped)
+0921862	1.483667	discard	2000	DAT+SPL alternating clear (direct mode $ breaks MOV copy again)
+bfe15b7	2.485250	discard	2000	bptr.A=5029 DAT bomb via *indirect (works! but DAT vastly weaker than SPL)
+fb723fd	0.500667	discard	2000	twin scanner boot broken (dst.B=0, wrote to wrong position)
+08dde73	1.760417	discard	2000	twin scanner fixed boot (process dilution fatal: sc 0.6% st 28%)
+d269b8c	1.898500	discard	2000	@bptr B-indirect vampire bomb (JMP redirect, no fork, ties)
+d580b89	2.872375	discard	2000	dptr.B=23 with traps (4 runs avg, below baseline -0.004)
+85e676c	2.875917	discard	2000	>first B-postinc (equivalent to }first A-postinc, noise)
+85e219b	2.874653	discard	2000	{first A-predec backward sequential scan (6 runs avg, noise -0.001)
+d51711c	2.870417	discard	2000	<first B-predec backward sequential via B-field (-0.006)
+dbe1c92	2.870250	discard	2000	@scanptr B-indirect in djn.f (sequential decrement, -0.006)
+30a9ce4	2.887917	keep	10000	***STEP=12621 BREAKTHROUGH*** 3x4207 GCD=21 st 77→80.3%! +0.012!!
+198a91b	2.896067	keep	10000	***STEP=42 DOUBLE BREAKTHROUGH*** GCD=42 st 81.2%! sc 95.3%! +0.020!!
+c0334f7	2.912750	keep	10000	***STEP=21 TRIPLE BREAKTHROUGH*** sc 98.8%!! st 81.6%!! +0.037!!!
+c7b53f7	2.880583	discard	2000	step=7 GCD=7 3600 cells (below step=21)
+31fb0aa	2.907917	discard	2000	step=14 GCD=14 1800 cells (good but below 21)
+screen	2.908917	discard	2000	step=28 GCD=28 900 cells
+screen	2.901083	discard	2000	step=35 GCD=35 720 cells
+screen	2.779083	discard	2000	step=63 GCD=63 400 cells (too few)
+screen	2.752667	discard	2000	step=84 GCD=84 300 cells (too few)
+screen	2.905917	discard	2000	step=15 GCD=15 1680 cells
+screen	2.904667	discard	2000	step=18 GCD=18 1400 cells
+screen	2.908083	discard	2000	step=20 GCD=20 1260 cells
+screen	2.908083	discard	2000	step=24 GCD=24 1050 cells
+screen	2.907417	discard	2000	step=25 GCD=25 1008 cells
+screen	2.908750	discard	2000	step=30 GCD=30 840 cells
+2aed6ee	2.908500	discard	2000	step=20 GCD=20 1260 cells (3 runs avg, below 21)
+a6ed590	2.676000	discard	2000	step=147 GCD=21 1200 cells but 147-gap too wide for }first
+a60265c	2.909000	discard	2000	gap=1 with step=21 (below gap=2)
+bb78c71	2.910500	discard	2000	gap=3 with step=21 (below gap=2)
+563bcd0	2.909750	discard	2000	dptr.A=21 with step=21 (fork too close, -0.003)
+8e596f9	2.913333	discard	2000	dptr.B=21 with step=21 (noise, equivalent)
+20f49fe	2.912000	discard	2000	dptr.B=11 with step=21 (4 runs avg, noise)
+0b50f66	2.912417	discard	2000	dptr.B=13 with step=21 (noise)
+537a640	2.911417	discard	2000	dptr.A=5000 with step=21 (noise)
+37ec10c	2.915250	discard	2000	dptr.A=7000 with step=21 (4 runs avg, noise +0.002)
+8c72875	2.915833	discard	2000	dptr.A=8000 with step=21 (noise)
+948ac2d	2.914833	discard	2000	dptr.A=6000 with step=21 (noise)
+a99a209	2.913233	discard	10000	gate=clear_s-6 with step=21 (10000r noise, identical to -4)
+8fc0785	2.911083	discard	2000	gate=clear_s-5 with step=21 (below -4)
+0e69985	2.900417	discard	2000	step=19 GCD=1 coprime (25200 cells, too slow to cycle)
+f9f6adc	2.909833	discard	2000	step=22 GCD=2 (12600 cells, below 21)
+f8a2b4f	2.900583	discard	2000	triple-bomb clear with step=21 (-0.012, timing worse)
+6984ddc	2.913600	discard	2000	gap=4 with step=21 (5 runs avg, noise +0.001)
+4f6b253	2.915583	keep	10000	gap=5 with step=21: avg 2.916 at 10000r (+0.003, st 82.3%)
+49d0c8c	2.915083	discard	2000	gap=7 with step=21 (noise)
+c800fba	2.916083	discard	2000	gap=10 with step=21 (equivalent to gap=5)
+c614912	2.615917	discard	2000	step=231 GCD=21 1200 cells 231-jumps (too wide for }first)
+6f0bd3b	1.777500	discard	2000	bptr.B=5 CATASTROPHIC with step=21 gap=5 (unknown interaction)
+dd5e1c3	2.914417	discard	2000	bptr.B=7 with step=21 gap=5 (noise)
+c10b02f	2.913000	discard	2000	first=bptr+step with step=21 (slightly below)
+655776e	2.916483	discard	2000	dptr.A=4207 with step=21 (5 runs avg, noise +0.001)
+f9a8388	2.902500	discard	2000	step=17 prime GCD=1 (coprime too slow to cycle)
+1d9e4c3	2.913750	discard	2000	step=16 GCD=16 1575 cells (slightly below 21)
+26ee482	2.917733	keep	10000	NO }first: direct mode sne (sc 99.2%! +0.002, no concealment leak)
+f342b2e	2.921783	keep	10000	djn.b #0 self-decrement: ZERO core modification! st 82.8% +0.004
+e321676	2.913833	discard	2000	gap=6 with djn.b#0 (below gap=5)
+f479b59	2.915667	discard	2000	gap=4 with djn.b#0 (below gap=5)
+bb307f3	2.916000	discard	2000	gap=3 with djn.b#0 (below gap=5)
+4b516c5	2.913000	discard	2000	step=22 with gap=5 djn.b#0 (still below 21)
+556db2d	2.919275	keep	10000	DEFINITIVE: step=21 gap=5 djn.b#0 avg 2.919 (2 runs at 10000r)
+376bb84	2.904583	discard	2000	step=12 GCD=12 2100 cells (below step=21)
+2c72aef	2.935417	keep	10000	***SINGLE-BOMB BREAKTHROUGH*** st 86.6%!! sc 99.4%!! +0.016!!
+31fa7ec	2.932500	discard	2000	gate=clear_s-4 with single-bomb (below -3)
+13b7d2c	2.679333	discard	2000	gate=clear_s-2 with single-bomb (self-corruption at dptr)
+0cb7dd5	2.927333	discard	2000	gap=3 with single-bomb (below gap=5)
+3f4c828	2.932833	discard	2000	gap=7 with single-bomb (below gap=5)
+796afa5	2.930500	discard	2000	dptr.B=11 with single-bomb (below B=17)
+fdd34b0	2.915833	discard	2000	skip Guenzel (jmp clear_s not -1) single-bomb (-0.019)
+a8558d2	2.911167	discard	2000	asymmetric inc (21,26) bomb/detect misalignment (-0.024)
+57bf6f2	2.931583	discard	2000	first=dptr+step with single-bomb (-0.004)
+691d285	2.931833	discard	2000	step=20 with full new arch (5 runs avg, below 21)
+1b1feb2	2.926583	discard	2000	gap=10 with single-bomb (below gap=5)
+e83f064	2.931500	discard	2000	inc=spl step,step (enemy survives near scanner, -0.004)
+f4d54d2	2.933167	discard	2000	no <gate pre-decrement (6 runs avg, below with pre-dec)
+85aea1d	2.922083	discard	2000	dptr.A=3000 single-bomb (too close, -0.013)
+b1f31d8	1.910500	discard	2000	reversed layout scan-before-clear (gate overlaps jmp, self-corrupt)
+18953e9	2.924417	discard	2000	step=25 GCD=25 1008 cells with single-bomb (-0.011)
+e5b12c9	2.931167	discard	2000	sne.x cross-comparison (less sensitive than .i, -0.004)
+9da746d	2.925833	discard	2000	dptr.B=7 with single-bomb (-0.009)
+6ef9242	2.932967	discard	2000	dptr.B=23 with single-bomb (5 runs avg, noise)
+bc84e78	2.933283	keep	10000	DEFINITIVE: step=21 gap=5 single-bomb djn.b#0 avg 2.933 (2x 10000r)
+560a38a	2.935175	keep	10000	gap=16 with single-bomb: avg 2.935 (2x 10000r) st 87.5%! +0.002
+2ff9955	2.929833	discard	2000	gap=15 with single-bomb (below 16)
+69e9da2	2.924083	discard	2000	gap=17 with single-bomb (below 16)
+567dd6a	2.932750	discard	2000	gap=11 with single-bomb (below 16)
+d312093	2.930000	discard	2000	gate=clear_s-5 with single-bomb gap=16 (-0.005)
+97f630f	2.932750	discard	2000	dptr.B=21 with single-bomb gap=16 (noise)
+117e064	2.932083	discard	2000	dptr.B=29 with single-bomb gap=16 (noise)
+6c97c2d	1.484833	discard	2000	9-cell fall-through ($ mode MOV breaks copy, irreducible at 10)
+7baa9c7	2.917333	discard	2000	gap=step (redundant probe overlap, -0.018)
+b82ec69	2.931417	discard	2000	sne.f value-only comparison (misses opcode-only diffs, -0.004)
+e3184e6	2.901500	discard	2000	dptr.A=25179 (fork in trap field clogs OUR queue, -0.033)
+a0c8b2f	2.935717	keep	10000	DEFINITIVE: step=21 gap=16 single-bomb avg 2.936 (3x 10000r)
+ddfacf8	2.787500	discard	2000	dptr spl $9000 direct mode CATASTROPHIC (# mode = self-fork bombs!)
+b009055	2.927417	discard	2000	step=24 gap=19 (GCD=24 1050 cells, below step=21)
+8b2dab4	2.360417	discard	2000	}bptr in clear djn CATASTROPHIC (bomb source changes each iteration)
+0bec50f	2.925833	discard	2000	step=18 gap=13 (GCD=18, below step=21 gap=16)
+1878b9f	2.860583	discard	2000	scanner embedded in mid-trap-field (more boundaries, -0.075)
+55d9714	2.932729	discard	2000	jmz scan,#0 unconditional loop (4 runs avg, slightly below djn.b)
+ec77618	2.935450	keep	10000	jmp scan (simplest loop, equivalent perf, simpler code)
+314fe70	1.937500	discard	2000	bptr.B=0 CATASTROPHIC (same mystery as B=5, B=9 confirmed)
+d4a978f	1.264917	discard	2000	bptr.B=3 CATASTROPHIC (boundary: B<=5 breaks, B>=6 works)
+dd11658	2.935833	discard	2000	bptr.B=6 (works, equivalent to B=9)
+b084291	2.934208	discard	2000	bptr.B=13 (6 runs avg, noise below B=9)
+34c6be9	2.932250	discard	2000	gap=14 with step=21 (below gap=16)
+b6d8f33	2.933750	discard	2000	dptr.B=37 (noise, equivalent to B=17)
+f5154b3	2.928667	discard	2000	dptr.B=100 (slightly below B=17)
+8f37f37	2.930250	discard	2000	dptr.A=9009 (step-aligned, below A=9000)
+8477b1b	2.931250	discard	2000	sne first+16,first+1 (B shifted, breaks bomb targeting)
+d51c81a	2.935000	discard	2000	sub inc (backward scan, identical to forward)
+8eddc3e	2.927167	discard	2000	gap=20 (=step-1, bombs start too far from enemy)
+986709c	2.933167	discard	2000	jmp dptr vs clear_s-1 (5 runs avg, noise below baseline)
+f6dc30c	2.893167	discard	2000	step=63 gap=58 single-bomb (400 cells too few, -0.043)
+2900015	2.934167	discard	2000	gap=13 (stone-targeted, no improvement vs gap=16)
+6e3ec9a	2.934167	discard	2000	first=inc-1+step (9-cell probe shift, noise)
+9336803	2.934083	discard	2000	jmp scan >dptr (dptr.B side effect, noise)
+1478c81	2.930000	discard	2000	jmp scan >bptr (core modification breaks stealth, -0.006)
+928d318	2.933000	discard	2000	step=23 prime GCD=1 (25200 cells, too slow to cycle)
+dd4d3d3	2.933192	keep	20000	ULTRA-PRECISION 20000r: true score 2.933 (st 86.2% sc 99.3% ci 97.3%)
+4834c33	2.927583	discard	2000	gap=18 (=step-3, below gap=16)
+c4c94a5	2.935767	discard	10000	dptr.A=10000 at 10000r (noise, equivalent to A=9000)
+737d190	2.927500	discard	2000	first=step (probes too close to own code, -0.006)
+ce01342	2.801667	discard	2000	first=bptr-1+step*500 (far probe start, terrible -0.131)
+b6b5214	2.930417	discard	2000	first=bptr-1+step*2 (noise, shifted 1 probe)
+0ca27b8	2.935708	discard	2000	inc before traps (6 runs avg, noise-equivalent to inc after)
+screen	2.925167	discard	2000	scanner+stone hybrid SPL (process dilution st 83.2%, -0.008)
+0ecc507	2.924750	discard	2000	dptr.A=12600 half-core with step=21 (fork near enemy, -0.008)
+edcfb49	2.936366	discard	2000	redcode-94 vs redcode-94nop (5 runs avg, identical)
+0268804	1.710333	discard	2000	embedded traps bptr.A=3 CATASTROPHIC (A=3 fails like B≤5 mystery!)
+d073124	2.936833	discard	2000	12-cell bptr.A=1 with DAT padding (same perf, proves A=3 was issue)
+9edde08	1.709917	discard	2000	bptr.A=2 CATASTROPHIC (bomb=spl#0#0 creates ties not wins!)
+dbd4320	2.932583	discard	2000	bptr.B=6 (works, noise-equivalent to B=9)
+7741175	1.932917	discard	2000	bptr.B=4 CATASTROPHIC (B≤5 boundary: @bptr chain hits scan code)
+0080b29	2.552083	discard	2000	bptr.B=1 (B-indirect chains through dptr.B=17 to trap, wrong bomb)
+e03f66d	2.936917	discard	2000	bptr.B=10 (empty core, noise-equivalent to B=9)
+95e1143	2.923333	discard	2000	bptr.B=8 (jmp with <gate side effect, -0.013)
+b750d0a	2.932000	discard	2000	step=20 gap=15 (GCD=20, below step=21 gap=16)
+ddb59cb	2.935017	discard	2000	bptr.B=10 (5 runs avg, noise-equivalent to B=9)
+2db1764	2.934050	discard	2000	dptr.B=#17 immediate mode (5 runs avg, noise)
+screen	0.992917	discard	2000	7-cell nano warrior (broken: no handler, bad add modifier)
+757be20	2.931083	discard	2000	sne.a A-field only (misses B-only diffs, -0.002)
+d57fe88	2.865250	discard	2000	sne.b B-field only (misses A-only diffs, -0.068)
+050ecfc	2.932333	discard	2000	add.x cross-add (noise, identical to add.f with symmetric inc)
+ddcad3a	2.932833	discard	2000	dptr.A=6300 quarter-core (noise, equivalent to A=9000)
+ceffd00	2.937525	keep	10000	***mov.b scanptr,gate*** gate keeps trap opcode! ci 98.5%! +0.004!
+21c11d1	2.927750	discard	2000	mov.ab (A-probe→gate.B, bombs 16 cells too far, -0.009)
+3991fd1	2.937709	discard	2000	jmp >gate vs <gate (4 runs avg, noise-equivalent)
+96ff919	2.940608	keep	20000	DEFINITIVE: mov.b gate write 2.941 at 20000r! ci 98.6% st 87.0%!
+dc6cee2	2.130167	discard	2000	mov.x clear bomb (cross-copy, keeps enemy opcode, -0.811)
+cf53e23	2.937570	discard	2000	djn.x clear (identical to djn.f for DJN, noise)
+f25bb5e	1.590250	discard	2000	backward clear <gate (bombs miss enemy code, -1.351)
+6fb2dfe	2.934167	discard	2000	step=19 gap=14 prime GCD=1 (coprime cycle too slow)
+85937b7	2.935167	discard	2000	dptr.B=21 with mov.b gate (noise)
+db66310	1.697333	discard	2000	gate=bptr CATASTROPHIC (>gate modifies bptr.B through B≤5 zone)
+9a1d954	1.710250	discard	2000	gate=dptr CATASTROPHIC (source=target self-corruption)
+d9f76e4	2.934250	discard	2000	step=14 gap=9 full arch (below step=21)
+2092aab	2.931500	discard	2000	step=28 gap=23 full arch (below step=21)
+2988f4f	2.938700	discard	2000	{gate A-predec (5 runs avg, noise-equiv to <gate B-predec)
+24857bb	2.935750	discard	2000	no <gate with mov.b (pre-dec still essential, -0.005)
+f127617	1.703667	discard	2000	gate=dptr with mov.b CATASTROPHIC (source/dest overlap in MOV)
+c14543b	2.937950	discard	10000	sne.f full arch at 10000r (noise-identical to sne.i)
+2ad5180	2.935583	discard	2000	bptr.B=21 (noise, same as B=9,10 — all B≥6 equivalent)
+fe39a67	2.933167	discard	2000	first=clear_s+step (different probe alignment, -0.008)
+9cbedee	2.858417	discard	2000	spl *9000 A-indirect (unpredictable forks, # mode essential)
+94a48a3	2.934333	discard	2000	dptr.B=0 (below B=17, -0.007)
+e090fe8	2.935500	discard	2000	bptr.B=17 matching dptr.B (noise, no concealment benefit)
+dcb51e4	2.938396	discard	2000	org scanptr (4 runs avg, noise, org scan cleaner)
+f3d8362	2.940333	discard	2000	inc=spl (more detectable at inc→empty boundary, dat better)
+bd8f4d3	1.700750	discard	2000	bptr=spl CATASTROPHIC (SPL forks during A-indirect resolution!)
+675526f	1.710917	discard	2000	bptr=nop CATASTROPHIC (ALL non-DAT opcodes fail at bptr)
+c17aaf8	2.937848	discard	2000	dptr.A=8999 (6 runs avg, noise-equiv to A=9000)
+5ee2a78	2.940222	discard	2000	dptr B-mode > (secondary corruption, 6 runs avg, noise)
+edcc888	2.938500	discard	2000	dptr B-mode < (pre-dec secondary, noise)
+screen	0.500000	discard	2000	tornado 4-proc scanner (shared scanptr corruption)
+1059543	2.933833	discard	2000	1 DAT buffer (2 boundaries worse than 1, -0.007)
+814932f	2.941250	discard	2000	dptr.A=8400 (1/3 core, noise-equiv to 9000)
+8ec8246	2.938278	discard	2000	bptr.B=11 full final arch (3 runs avg, noise-equiv to B=9)
+4cb9e49	2.937458	discard	2000	gap=12 full arch (6 runs avg, first was outlier, below 16)
+4de9714	2.933833	discard	2000	gap=8 full arch (below 16)
+fb530fb	2.937500	discard	2000	dptr.B=16 (=gap, noise-equiv to B=17)
+40377cc	2.937277	discard	2000	dptr.B=9 (=bptr.B, 6 runs avg, noise-equiv to B=17)
+cd28b4b	2.918750	discard	2000	step=32 gap=27 (GCD=16, 1575 cells, too slow)
+db2d1fb	2.934683	discard	2000	step=10 gap=5 (GCD=10, 2520 cells, 5 runs avg below 21)
+97376c2	2.727500	discard	2000	mul scan (exponential probes, far fewer positions/cycle)
+efee27e	1.807500	discard	2000	reversed layout scanner-first (gate overlaps dptr)
+110627a	1.647833	discard	2000	bidirectional clear fwd+bwd (backward bombs miss enemy)
+3d8f62a	2.933250	discard	2000	gap=42 (=2*step, bombs 42 cells from front, too far)
+f5ee1f5	2.936667	discard	2000	inc #modes (dat #step,#step, modes differ from empty core)
+df2486c	2.940583	discard	2000	end-only no org (identical, org redundant with end)
+17468e5	2.939833	discard	2000	dptr.A=8820 (21*420, no step-alignment resonance)
+474a423	2.936083	discard	2000	spl #0,#step traps (B=21, noise)
+63d1079	2.938750	discard	2000	dptr.A=8500 (noise, flat in 5000-10000 range confirmed)
+69355d8	2.935833	discard	2000	gap=9 full arch (below 16)
+86eb354	2.934667	discard	2000	gap=6 full arch (below 16)
+c213c60	2.938417	discard	2000	gap=2 full arch (close but below 16)
+e0a84db	2.939750	discard	2000	bptr.B=12 (noise, flat B≥6 confirmed)
+899b941	2.934250	discard	2000	dptr.B=15 (noise, flat 7-100 confirmed)
+a17d40b	2.937583	discard	2000	dptr.B=19 (noise, flat 7-100 confirmed)
+34ee44d	2.906333	discard	2000	dptr.A=441 (=step^2, too close to code, -0.034)
+efee27e	1.807500	discard	2000	reversed layout scanner-first (gate overlaps dptr, broken)
