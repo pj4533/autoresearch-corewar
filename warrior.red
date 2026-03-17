@@ -2,7 +2,7 @@
 ;name Fortress
 ;author autoresearch-corewar
 ;strategy TRAP FIELD: 5029 spl traps + hidden oneshot scanner
-;strategy Score: 2.935 (+23.9% from baseline 2.368)
+;strategy Score: 2.936 (+24.0% from baseline 2.368)
 ;strategy step=21 gap=16 single-bomb zero-mod scan
 ;assert CORESIZE==25200
 
