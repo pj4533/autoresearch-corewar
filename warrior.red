@@ -26,7 +26,7 @@ clear_s mov    *bptr,    >gate
 
 scan    add    inc,      scanptr
 scanptr sne    first+gap, first
-        djn.b  scan,     #0
+        jmp    scan
         mov    scanptr,  gate
         jmp    clear_s-1, <gate
 
